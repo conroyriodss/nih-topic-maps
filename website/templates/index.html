@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NIH Topic Maps</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; }
+        .header {
+            background: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e1e4e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .header h1 { color: #333; font-size: 24px; }
+        .header a { color: #667eea; text-decoration: none; margin-left: 20px; font-size: 14px; }
+        .header a:hover { text-decoration: underline; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .card {
+            background: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .card h2 { color: #333; margin-bottom: 15px; font-size: 20px; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat {
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value { font-size: 36px; font-weight: bold; margin-bottom: 8px; }
+        .stat-label { font-size: 13px; opacity: 0.9; }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .btn:hover { background: #5568d3; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧬 NIH Topic Maps</h1>
+        <div>
+            <a href="/topics">Browse Topics</a>
+            <a href="/visualization">Interactive Map</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <h2>Dataset Overview</h2>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">50,000</div>
+                    <div class="stat-label">Grants Analyzed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">74</div>
+                    <div class="stat-label">Topics Identified</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">$23.5B</div>
+                    <div class="stat-label">Total Funding</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">2000-2024</div>
+                    <div class="stat-label">Years Covered</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Quick Access</h2>
+            <p style="margin-bottom: 20px; color: #666;">Explore NIH research topics using PubMedBERT embeddings and K-Means clustering.</p>
+            <a href="/topics" class="btn">View All Topics</a>
+            <a href="/visualization" class="btn">Interactive Visualization</a>
+        </div>
+
+        <div class="card">
+            <h2>About</h2>
+            <p style="color: #666; line-height: 1.6;">
+                This prototype analyzes 50,000 NIH grants (FY 2000-2024) using PubMedBERT embeddings 
+                and K-Means clustering to identify 74 distinct research topics. The analysis covers 
+                grants from all 27 NIH Institutes and Centers.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

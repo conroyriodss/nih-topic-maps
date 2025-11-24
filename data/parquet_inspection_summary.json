@@ -1,0 +1,93 @@
+{
+  "project_id": "od-cl-odss-conroyri-f75a",
+  "bucket": "od-cl-odss-conroyri-nih-raw-data",
+  "total_parquet_files": 107,
+  "inspected_files": 5,
+  "file_details": [
+    {
+      "file": "abstracts/YEAR=1990/abstracts_1990.parquet",
+      "rows": 42659,
+      "columns": [
+        "APPLICATION_ID",
+        "ABSTRACT_TEXT",
+        "YEAR"
+      ],
+      "id_columns": [
+        "APPLICATION_ID"
+      ],
+      "has_title": false,
+      "has_abstract": true,
+      "fiscal_years": {
+        "1990.0": 42659
+      }
+    },
+    {
+      "file": "abstracts/YEAR=1991/abstracts_1991.parquet",
+      "rows": 45722,
+      "columns": [
+        "APPLICATION_ID",
+        "ABSTRACT_TEXT",
+        "YEAR"
+      ],
+      "id_columns": [
+        "APPLICATION_ID"
+      ],
+      "has_title": false,
+      "has_abstract": true,
+      "fiscal_years": {
+        "1991.0": 45722
+      }
+    },
+    {
+      "file": "abstracts/YEAR=1992/abstracts_1992.parquet",
+      "rows": 43974,
+      "columns": [
+        "APPLICATION_ID",
+        "ABSTRACT_TEXT",
+        "YEAR"
+      ],
+      "id_columns": [
+        "APPLICATION_ID"
+      ],
+      "has_title": false,
+      "has_abstract": true,
+      "fiscal_years": {
+        "1992.0": 43974
+      }
+    },
+    {
+      "file": "abstracts/YEAR=1993/abstracts_1993.parquet",
+      "rows": 44021,
+      "columns": [
+        "APPLICATION_ID",
+        "ABSTRACT_TEXT",
+        "YEAR"
+      ],
+      "id_columns": [
+        "APPLICATION_ID"
+      ],
+      "has_title": false,
+      "has_abstract": true,
+      "fiscal_years": {
+        "1993.0": 44021
+      }
+    },
+    {
+      "file": "abstracts/YEAR=1994/abstracts_1994.parquet",
+      "rows": 44400,
+      "columns": [
+        "APPLICATION_ID",
+        "ABSTRACT_TEXT",
+        "YEAR"
+      ],
+      "id_columns": [
+        "APPLICATION_ID"
+      ],
+      "has_title": false,
+      "has_abstract": true,
+      "fiscal_years": {
+        "1994.0": 44400
+      }
+    }
+  ]
+}
