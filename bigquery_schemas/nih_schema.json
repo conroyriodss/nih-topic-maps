@@ -1,0 +1,78 @@
+[
+  {
+    "name": "project_id",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Application ID from NIH RePORTER"
+  },
+  {
+    "name": "fiscal_year",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "project_title",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "abstract",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "project_start_date",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "project_end_date",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "organization_name",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "organization_city",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "organization_state",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "organization_country",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "principal_investigator",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "total_funding",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "funding_mechanism",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "opportunity_number",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "core_project_num",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "Core_Project_Number",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ClinicalTrials_gov_ID",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Study",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Study_Status",
+    "type": "STRING"
+  }
+]

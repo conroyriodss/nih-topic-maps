@@ -91,3 +91,13 @@ NIH Topic Maps builds interactive visualizations of NIH ExPORTER grant data usin
     - Embeddings
     - Topics
     - IC mappings
+
+## Scorecard Tables (Complete)
+
+| Scorecard | Description | Key Features |
+|-----------|-------------|--------------|
+| grant_scorecard | Grant-level rollup | Subprojects, outputs, timelines |
+| pi_scorecard | PI career metrics | Funding tiers, productivity, multi-IC |
+| institution_scorecard | Institutional portfolios | Geography, types, outputs |
+| ic_scorecard_enhanced | IC comparisons | Portfolio size, productivity metrics |
+
