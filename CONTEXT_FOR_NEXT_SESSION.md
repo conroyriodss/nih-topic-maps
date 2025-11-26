@@ -101,3 +101,17 @@ NIH Topic Maps builds interactive visualizations of NIH ExPORTER grant data usin
 | institution_scorecard | Institutional portfolios | Geography, types, outputs |
 | ic_scorecard_enhanced | IC comparisons | Portfolio size, productivity metrics |
 
+
+## Visualization Status (Nov 26, 2025)
+
+✅ **Working visualization hosted at:**
+`https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/topic_map_interactive.html`
+
+**Data Pipeline:**
+- 50K sample from FY 2000-2024
+- PubMedBERT embeddings (228 MB parquet in GCS)
+- UMAP 2D coordinates (1 MB parquet in GCS)  
+- 74 topics via K-means
+- viz_data.json (12.35 MB) loaded by interactive HTML
+
+**Note:** Embeddings stored in GCS only, not BigQuery. This is fine for visualization purposes.
