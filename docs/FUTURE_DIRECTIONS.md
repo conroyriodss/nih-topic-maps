@@ -248,3 +248,57 @@ Requirements:
 ---
 
 *Last updated: November 26, 2025*
+
+---
+
+## Performance: VM vs Cloud Shell
+
+For compute-intensive tasks, use a GCE VM instead of Cloud Shell:
+
+### When to Use VM
+
+- Embedding generation (hours)
+- K optimization with many values
+- Full dataset clustering (2M+ grants)
+- Any job >30 minutes
+
+### Quick VM Setup
+
+    # Create VM with GPUs (for embedding generation)
+    gcloud compute instances create nih-compute \
+      --zone=us-central1-a \
+      --machine-type=n1-standard-8 \
+      --accelerator=type=nvidia-tesla-t4,count=1 \
+      --image-family=pytorch-latest-gpu \
+      --image-project=deeplearning-platform-release \
+      --boot-disk-size=100GB \
+      --scopes=cloud-platform
+
+    # Or CPU-only for clustering
+    gcloud compute instances create nih-compute-cpu \
+      --zone=us-central1-a \
+      --machine-type=n2-standard-16 \
+      --image-family=debian-11 \
+      --image-project=debian-cloud \
+      --boot-disk-size=50GB \
+      --scopes=cloud-platform
+
+    # SSH in
+    gcloud compute ssh nih-compute --zone=us-central1-a
+
+    # Install dependencies
+    pip install pandas numpy scikit-learn umap-learn google-cloud-bigquery pyarrow
+
+    # Run job
+    python3 scripts/find_optimal_k.py
+
+    # Delete when done (saves cost)
+    gcloud compute instances delete nih-compute --zone=us-central1-a
+
+### Cost Estimate
+
+- n2-standard-16: ~$0.50/hour
+- With T4 GPU: ~$0.75/hour
+- Typical clustering job: 1-2 hours = $1-2
+
+Much faster than Cloud Shell timeout issues.

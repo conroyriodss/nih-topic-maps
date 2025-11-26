@@ -1,0 +1,13 @@
+{
+  "results": [
+    {"k": 50, "silhouette": 0.022, "calinski_harabasz": 496.1, "min_size": 253, "max_size": 1561},
+    {"k": 74, "silhouette": 0.021, "calinski_harabasz": 365.2, "min_size": 263, "max_size": 1115},
+    {"k": 100, "silhouette": 0.018, "calinski_harabasz": 287.7, "min_size": 50, "max_size": 772},
+    {"k": 125, "silhouette": 0.018, "calinski_harabasz": 240.0, "min_size": 50, "max_size": 641},
+    {"k": 150, "silhouette": 0.016, "calinski_harabasz": 206.8, "min_size": 28, "max_size": 674},
+    {"k": 175, "silhouette": 0.016, "calinski_harabasz": 182.5, "min_size": 48, "max_size": 493},
+    {"k": 200, "silhouette": 0.015, "calinski_harabasz": 163.7, "min_size": 23, "max_size": 437}
+  ],
+  "recommendation": "K=100 balances granularity with cluster quality",
+  "notes": "Low silhouette scores suggest overlapping topics - hybrid approach with RCDC may help"
+}

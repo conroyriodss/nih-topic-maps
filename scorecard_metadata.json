@@ -1,0 +1,5 @@
+BigQuery error in query operation: Error processing job 'od-cl-odss-
+conroyri-f75a:bqjob_r48355469eb859f59_0000019ac16761c5_1': Invalid project ID
+'`od-cl-odss-conroyri-f75a'. Project IDs must contain 6-63 lowercase letters,
+digits, or dashes. Some project IDs also include domain name separated by a
+colon. IDs must start with a letter and may not end with a dash.

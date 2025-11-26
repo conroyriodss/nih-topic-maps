@@ -1,0 +1,16 @@
+{
+  "n_clusters": 100,
+  "silhouette_score": 0.015209825209484202,
+  "min_cluster_size": 53,
+  "max_cluster_size": 772,
+  "mean_cluster_size": 500.0,
+  "tiny_clusters": 0,
+  "mean_ics_per_cluster": 24.24,
+  "max_ics_per_cluster": 38,
+  "rcdc_coverage": 0.64634,
+  "weights": {
+    "embedding": 0.7,
+    "rcdc": 0.2,
+    "ic": 0.1
+  }
+}
