@@ -115,3 +115,29 @@ NIH Topic Maps builds interactive visualizations of NIH ExPORTER grant data usin
 - viz_data.json (12.35 MB) loaded by interactive HTML
 
 **Note:** Embeddings stored in GCS only, not BigQuery. This is fine for visualization purposes.
+
+## Session: November 26, 2025 AM
+
+### Accomplishments
+- ✅ Validated all BigQuery tables (2.09M projects, 2.33M abstracts)
+- ✅ Confirmed visualization working with 50K sample
+- ✅ Analyzed clustering quality - identified issues
+- ✅ Compared with NIH Maps methodology (K=150 vs K=74)
+- ✅ Started K optimization evaluation (running)
+- ✅ Cleaned up repository and archived old files
+
+### Clustering Analysis Results
+- Current: K=74 clusters
+- Issues found:
+  - 2 singleton/tiny clusters (1-6 grants)
+  - 1 distant outlier cluster (Topic 26, distance=10.4)
+  - 10 topics with 32+ different ICs (too generic)
+- Recommendation: Increase to K=150 (NIH Maps standard)
+
+### Next Steps
+1. Wait for K optimization results (~40 min)
+2. Re-cluster with optimal K
+3. Regenerate UMAP with better parameters
+4. Update visualization with improved clustering
+5. Generate better topic labels
+
