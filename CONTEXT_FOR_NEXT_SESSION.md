@@ -141,3 +141,16 @@ NIH Topic Maps builds interactive visualizations of NIH ExPORTER grant data usin
 4. Update visualization with improved clustering
 5. Generate better topic labels
 
+
+---
+
+## Future Directions Documented
+
+See docs/FUTURE_DIRECTIONS.md for comprehensive planning on:
+- Coloring visualization by NIH funding category
+- Aligning clusters with RCDC categories
+- Validating PROJECT_TERMS via embeddings
+- Publication-to-grant alignment analysis
+- Temporal topic evolution
+
+Key file locations documented for all data sources.
