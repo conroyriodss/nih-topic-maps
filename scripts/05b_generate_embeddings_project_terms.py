@@ -42,7 +42,7 @@ print("#"*70 + "\n")
 
 start_time = time.time()
 
-# Load sample data with PROJECT_TERMS
+# Load sample data with PROJECT_TERMS - FIXED QUERY
 print("Loading 50K sample with PROJECT_TERMS from BigQuery...")
 query = f"""
 SELECT 
@@ -54,7 +54,7 @@ SELECT
     proj.PROJECT_TERMS
 FROM `{PROJECT_ID}.{DATASET_ID}.grant_text_sample` p
 LEFT JOIN `{PROJECT_ID}.{DATASET_ID}.projects_all` proj
-    ON p.APPLICATION_ID = proj.APPLICATION_ID
+    ON CAST(p.APPLICATION_ID AS STRING) = CAST(proj.APPLICATION_ID AS STRING)
 WHERE proj.PROJECT_TERMS IS NOT NULL
     AND LENGTH(proj.PROJECT_TERMS) > 10
 ORDER BY p.FISCAL_YEAR, p.APPLICATION_ID
@@ -206,5 +206,5 @@ print(f"Device: {device}")
 print(f"\nNext steps:")
 print(f"1. Check K optimization results:")
 print(f"   python3 scripts/check_k_results.py")
-print(f"\n2. Or cluster with K=150:")
-print(f"   python3 scripts/06_cluster_project_terms.py --k 150")
+print(f"\n2. Or cluster with K=100:")
+print(f"   python3 scripts/06_cluster_project_terms.py --k 100")

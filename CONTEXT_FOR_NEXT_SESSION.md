@@ -154,3 +154,28 @@ See docs/FUTURE_DIRECTIONS.md for comprehensive planning on:
 - Temporal topic evolution
 
 Key file locations documented for all data sources.
+
+Embedding Generation Status Nov 28 10:17 AM
+
+GPU VM job running successfully
+- Processing: 32 percent complete
+- ETA: about 11 minutes remaining
+- GPU: Tesla T4 working properly
+- Data: 43,320 grants with PROJECT_TERMS average 961 chars
+- Will auto-shutdown when complete
+
+What fixed it:
+1. Fixed PyTorch installation reinstalled with CUDA 11.8
+2. Fixed SQL query CAST APPLICATION_ID to STRING
+3. Added missing package: db-dtypes
+
+After completion:
+
+Check results
+  bash check_results_and_cleanup.sh
+
+Cluster with K=100
+  python3 scripts/06_cluster_project_terms.py --k 100
+
+Compare methods
+  python3 scripts/compare_clustering_methods.py
