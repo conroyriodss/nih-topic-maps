@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-11-28T15:43:28.074939",
+  "k": 100,
+  "n_samples": 43320,
+  "embedding_source": "PROJECT_TERMS",
+  "comparison_to_full_text": {
+    "full_text_silhouette": 0.018,
+    "project_terms_silhouette": 0.039097069234441846,
+    "improvement": "TBD after completion"
+  },
+  "metrics": {
+    "silhouette_score": 0.039097069234441846,
+    "davies_bouldin_index": 2.9548050677739606,
+    "calinski_harabasz_score": 466.05543935031443
+  },
+  "cluster_sizes": {
+    "mean": 433.2,
+    "median": 369.5,
+    "min": 35,
+    "max": 1249,
+    "small_clusters": 3
+  },
+  "ic_diversity": {
+    "mean_ics_per_cluster": 20.82,
+    "max_ics_per_cluster": 28,
+    "generic_clusters": 7
+  },
+  "time_minutes": 8.357829109827678
+}

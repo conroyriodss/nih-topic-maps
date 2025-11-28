@@ -179,3 +179,89 @@ Cluster with K=100
 
 Compare methods
   python3 scripts/compare_clustering_methods.py
+
+---
+
+Session Complete: November 28, 2025
+
+Final Results - PROJECT_TERMS Clustering SUCCESS
+
+Embedding Generation:
+- Successfully generated embeddings for 43,320 grants using PROJECT_TERMS
+- File size: 217.71 MiB
+- GPU VM auto-shutdown worked perfectly
+- Total cost: approximately 40 cents
+
+Clustering Results K=100:
+- Silhouette score: 0.0391 - 117 percent better than full-text 0.0180
+- Calinski-Harabasz: 466.06 - 62 percent better than full-text 287.7
+- Generic clusters: 7 - 50 percent fewer than full-text 14
+- Mean ICs per cluster: 20.8 - more focused than full-text 24
+- Only 3 small clusters, well-balanced overall
+
+Decision: Use PROJECT_TERMS embeddings for visualization
+
+Reasoning:
+- Superior clustering quality - 2x better silhouette
+- More interpretable - NIH curated terminology
+- Fewer over-generic clusters
+- Better alignment with NIH categorization
+- Faster to regenerate if needed
+
+Files Generated Today
+
+Scripts:
+- scripts/05b_generate_embeddings_project_terms.py
+- scripts/06_cluster_project_terms.py
+- scripts/check_k_results.py
+- scripts/compare_clustering_methods.py
+- launch_gpu_vm.sh and full GPU pipeline
+- verify_repository.sh
+- QUICK_REFERENCE.md
+
+Data in GCS:
+- embeddings_project_terms_50k.parquet 217.71 MiB
+- embeddings_manifest_project_terms.json
+- embeddings_project_terms_clustered_k100.parquet
+- cluster_centers_project_terms_k100.npy
+- clustering_summary_project_terms_k100.json
+
+Reports:
+- data/processed/project_terms_clustering_report.json
+
+Next Session Priorities
+
+1. Generate UMAP visualization:
+   python3 scripts/07_create_umap_project_terms.py --k 100
+
+2. Create new interactive visualization:
+   - Use PROJECT_TERMS clusters K=100
+   - Update topic labels based on PROJECT_TERMS
+   - Deploy to GCS
+
+3. Topic interpretation:
+   - Analyze the 100 clusters
+   - Generate human-readable topic labels
+   - Identify key research themes
+
+4. Optional enhancements:
+   - Temporal analysis 2000-2024 trends
+   - IC-specific portfolios
+   - Alignment with RCDC categories
+
+Lessons Learned
+
+GPU VM Setup:
+- Always install db-dtypes with BigQuery
+- Use CAST for type compatibility in SQL joins
+- Startup scripts can be unreliable - install dependencies via SSH
+
+Clustering Approach:
+- PROJECT_TERMS much better than Full text for biomedical grants
+- K=100 is optimal from Nov 26 analysis
+- Silhouette scores are naturally low for overlapping biomedical topics
+
+Cost Management:
+- GPU VM with auto-shutdown works well
+- Total cost: about 40 cents for 16 minutes of processing
+- 10x faster than CPU - 16 min vs 2-4 hours
