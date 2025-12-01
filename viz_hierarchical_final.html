@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIH Topic Map - 5 Domains × 18 Topics</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.9; }
+        .container { display: flex; height: calc(100vh - 70px); }
+        .controls { width: 320px; background: white; border-right: 1px solid #e0e0e0; overflow-y: auto; padding: 20px; }
+        .control-group { margin-bottom: 20px; }
+        .control-group label { display: block; font-weight: 600; font-size: 12px; color: #333; text-transform: uppercase; margin-bottom: 8px; }
+        select, input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; margin-bottom: 6px; }
+        .stats { background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 12px; }
+        .stat-item { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .stat-label { color: #666; }
+        .stat-value { font-weight: 600; color: #667eea; }
+        .viz-container { flex: 1; position: relative; background: white; }
+        canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+        .tooltip { position: absolute; background: rgba(0,0,0,0.95); color: white; padding: 12px 15px; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 50; max-width: 380px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .tooltip-title { font-weight: 600; margin-bottom: 8px; color: #a8b3ff; font-size: 13px; }
+        .tooltip-item { margin: 4px 0; }
+        .tooltip-label { color: #aaa; display: inline-block; width: 80px; }
+        .legend { position: absolute; bottom: 20px; right: 20px; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-size: 11px; max-width: 260px; max-height: 450px; overflow-y: auto; }
+        .legend-title { font-weight: 600; margin-bottom: 10px; font-size: 12px; color: #333; }
+        .legend-item { display: flex; align-items: center; margin-bottom: 6px; cursor: pointer; padding: 4px; border-radius: 3px; }
+        .legend-item:hover { background: #f0f0f0; }
+        .legend-color { width: 14px; height: 14px; border-radius: 2px; margin-right: 8px; flex-shrink: 0; }
+        .legend-text { font-size: 11px; line-height: 1.3; }
+        button { width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; margin-bottom: 8px; }
+        button:hover { background: #5568d3; }
+        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #667eea; font-size: 16px; z-index: 100; }
+        .view-toggle { display: flex; gap: 8px; margin-bottom: 15px; }
+        .view-toggle button { padding: 8px 12px; font-size: 11px; margin-bottom: 0; }
+        .view-toggle button.active { background: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧬 NIH Topic Map - Hierarchical Clustering</h1>
+        <p>43,320 grants | FY 2000-2024 | 5 domains → 18 topics | DBSCAN natural clustering</p>
+    </div>
+    <div class="container">
+        <div class="controls">
+            <div class="view-toggle">
+                <button id="viewDomains" class="active" onclick="switchView('domains')">Domains (5)</button>
+                <button id="viewTopics" onclick="switchView('topics')">Topics (18)</button>
+            </div>
+            <div class="control-group">
+                <label>Filter by Domain</label>
+                <select id="domainFilter" multiple size="5">
+                    <option value="all" selected>All Domains</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Filter by IC</label>
+                <select id="icFilter" multiple size="4"><option value="all" selected>All ICs</option></select>
+            </div>
+            <div class="control-group">
+                <label>Year Range</label>
+                <input type="number" id="yearMin" min="2000" max="2024" value="2000">
+                <input type="number" id="yearMax" min="2000" max="2024" value="2024">
+            </div>
+            <button onclick="resetFilters()">Reset All Filters</button>
+            <div class="stats">
+                <div class="stat-item"><span class="stat-label">Visible:</span><span class="stat-value" id="visibleCount">43,320</span></div>
+                <div class="stat-item"><span class="stat-label">Domains:</span><span class="stat-value" id="domainCount">5</span></div>
+                <div class="stat-item"><span class="stat-label">Topics:</span><span class="stat-value" id="topicCount">18</span></div>
+                <div class="stat-item"><span class="stat-label">ICs:</span><span class="stat-value" id="icCount">--</span></div>
+            </div>
+        </div>
+        <div class="viz-container">
+            <div class="loading">Loading NIH grant data...</div>
+            anvas id="viz"></canvas>
+            <div id="legend" class="legend"></div>
+            <div class="tooltip" id="tooltip"></div>
+        </div>
+    </div>
+    <script>
+        let vizData,canvas,ctx,xScale,yScale,filteredPoints=[],currentView='domains';
+        let filters={domains:[],ics:[],yearMin:2000,yearMax:2024};
+        const domainColors=['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6'];
+        
+        fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data_hierarchical_5_dbscan_final.json')
+            .then(r=>r.json()).then(data=>{
+                vizData=data;
+                document.querySelector('.loading').style.display='none';
+                document.getElementById('domainCount').textContent=data.domains.length;
+                document.getElementById('topicCount').textContent=data.topics.length;
+                initCanvas();
+                populateFilters();
+                updateViz();
+            }).catch(err=>{
+                console.error('Error:',err);
+                document.querySelector('.loading').innerHTML='Error loading data.<br>Check console.';
+            });
+        
+        function initCanvas(){
+            canvas=document.getElementById('viz');
+            const container=canvas.parentElement;
+            canvas.width=container.clientWidth;
+            canvas.height=container.clientHeight;
+            ctx=canvas.getContext('2d');
+            const xe=d3.extent(vizData.points,d=>d.x);
+            const ye=d3.extent(vizData.points,d=>d.y);
+            xScale=d3.scaleLinear().domain(xe).range([30,canvas.width-30]);
+            yScale=d3.scaleLinear().domain(ye).range([canvas.height-30,30]);
+            canvas.addEventListener('mousemove',handleMouseMove);
+            canvas.addEventListener('mouseout',hideTooltip);
+        }
+        
+        function switchView(view){
+            currentView=view;
+            document.getElementById('viewDomains').classList.toggle('active',view==='domains');
+            document.getElementById('viewTopics').classList.toggle('active',view==='topics');
+            updateViz();
+        }
+        
+        function updateViz(){
+            filteredPoints=vizData.points.filter(d=>{
+                let keep=true;
+                if(filters.domains.length>0&&!filters.domains.includes('all'))
+                    keep=keep&&filters.domains.includes(d.domain.toString());
+                if(filters.ics.length>0&&!filters.ics.includes('all'))
+                    keep=keep&&filters.ics.includes(d.ic);
+                keep=keep&&d.year>=filters.yearMin&&d.year<=filters.yearMax;
+                return keep;
+            });
+            document.getElementById('visibleCount').textContent=filteredPoints.length.toLocaleString();
+            updateLegend();
+            render();
+        }
+        
+        function render(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            const fs=new Set(filteredPoints.map(d=>d.application_id));
+            const numTopics=vizData.topics.length;
+            vizData.points.forEach(d=>{
+                const vis=fs.has(d.application_id);
+                const color=currentView==='domains'?domainColors[d.domain]:d3.interpolateRainbow(d.topic/numTopics);
+                ctx.fillStyle=color;
+                ctx.globalAlpha=vis?0.7:0.06;
+                ctx.beginPath();
+                ctx.arc(xScale(d.x),yScale(d.y),2.5,0,Math.PI*2);
+                ctx.fill();
+            });
+            ctx.globalAlpha=1;
+        }
+        
+        function handleMouseMove(e){
+            const rect=canvas.getBoundingClientRect();
+            const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+            for(let d of filteredPoints){
+                if(Math.abs(xScale(d.x)-mx)<5&&Math.abs(yScale(d.y)-my)<5){
+                    showTooltip(e,d);return;
+                }
+            }
+            hideTooltip();
+        }
+        
+        function showTooltip(e,d){
+            const domain=vizData.domains.find(dom=>dom.id===d.domain);
+            const topic=vizData.topics.find(t=>t.id===d.topic);
+            const tooltip=document.getElementById('tooltip');
+            tooltip.innerHTML=`
+                <div class="tooltip-title">${d.title||'Grant '+d.application_id}</div>
+                <div class="tooltip-item"><span class="tooltip-label">App ID:</span> ${d.application_id}</div>
+                <div class="tooltip-item"><span class="tooltip-label">Domain:</span> ${domain?domain.label:'Unknown'}</div>
+                <div class="tooltip-item"><span class="tooltip-label">Topic:</span> ${topic?topic.label:'Unknown'}</div>
+                <div class="tooltip-item"><span class="tooltip-label">IC:</span> ${d.ic}</div>
+                <div class="tooltip-item"><span class="tooltip-label">Year:</span> ${d.year}</div>
+                <div class="tooltip-item"><span class="tooltip-label">Cost:</span> $${(d.cost/1e6).toFixed(2)}M</div>
+            `;
+            tooltip.style.display='block';
+            tooltip.style.left=Math.min(e.clientX+10,window.innerWidth-400)+'px';
+            tooltip.style.top=Math.min(e.clientY+10,window.innerHeight-200)+'px';
+        }
+        
+        function hideTooltip(){document.getElementById('tooltip').style.display='none';}
+        
+        function populateFilters(){
+            const domainFilter=document.getElementById('domainFilter');
+            vizData.domains.forEach(d=>{
+                const opt=document.createElement('option');
+                opt.value=d.id;
+                opt.textContent=d.label+' ('+(d.size/43320*100).toFixed(1)+'%)';
+                domainFilter.appendChild(opt);
+            });
+            const icSelect=document.getElementById('icFilter');
+            const ics=[...new Set(vizData.points.map(d=>d.ic))].sort();
+            document.getElementById('icCount').textContent=ics.length;
+            ics.forEach(ic=>{
+                const opt=document.createElement('option');
+                opt.value=ic;opt.textContent=ic;
+                icSelect.appendChild(opt);
+            });
+            domainFilter.onchange=e=>{filters.domains=Array.from(e.target.selectedOptions).map(o=>o.value);updateViz();};
+            icSelect.onchange=e=>{filters.ics=Array.from(e.target.selectedOptions).map(o=>o.value);updateViz();};
+            document.getElementById('yearMin').onchange=e=>{filters.yearMin=parseInt(e.target.value);updateViz();};
+            document.getElementById('yearMax').onchange=e=>{filters.yearMax=parseInt(e.target.value);updateViz();};
+        }
+        
+        function resetFilters(){
+            filters={domains:[],ics:[],yearMin:2000,yearMax:2024};
+            document.getElementById('domainFilter').selectedIndex=0;
+            document.getElementById('icFilter').selectedIndex=0;
+            document.getElementById('yearMin').value=2000;
+            document.getElementById('yearMax').value=2024;
+            updateViz();
+        }
+        
+        function updateLegend(){
+            const legend=document.getElementById('legend');
+            const numTopics=vizData.topics.length;
+            if(currentView==='domains'){
+                legend.innerHTML='<div class="legend-title">5 RESEARCH DOMAINS</div>';
+                vizData.domains.forEach(d=>{
+                    const item=document.createElement('div');
+                    item.className='legend-item';
+                    item.onclick=()=>{filters.domains=[d.id.toString()];updateViz();};
+                    item.innerHTML=`<div class="legend-color" style="background:${domainColors[d.id]}"></div>
+                        <div class="legend-text">${d.label}<br><small style="color:#888">${d.size.toLocaleString()} grants</small></div>`;
+                    legend.appendChild(item);
+                });
+            }else{
+                legend.innerHTML='<div class="legend-title">'+numTopics+' TOPICS</div>';
+                vizData.topics.forEach(t=>{
+                    const item=document.createElement('div');
+                    item.className='legend-item';
+                    item.innerHTML=`<div class="legend-color" style="background:${d3.interpolateRainbow(t.id/numTopics)}"></div>
+                        <div class="legend-text">${t.label}<br><small style="color:#888">${t.size.toLocaleString()} grants</small></div>`;
+                    legend.appendChild(item);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
