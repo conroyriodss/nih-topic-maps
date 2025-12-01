@@ -1,179 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>NIH Topic Maps - PROJECT_TERMS</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f5f7fa;
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        h1 { margin: 0 0 10px 0; font-size: 32px; }
-        .subtitle { opacity: 0.9; font-size: 16px; }
-        .badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.3);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            margin-top: 10px;
-        }
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .stat { text-align: center; padding: 15px; background: #f8f9fa; border-radius: 6px; }
-        .stat-value { font-size: 28px; font-weight: bold; color: #667eea; }
-        .stat-label { font-size: 13px; color: #666; margin-top: 5px; }
-        .btn {
-            display: inline-block;
-            padding: 15px 30px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            margin: 10px 10px 10px 0;
-            font-size: 16px;
-        }
-        .btn:hover { background: #5568d3; }
-        .btn-secondary {
-            background: #48bb78;
-        }
-        .btn-secondary:hover {
-            background: #38a169;
-        }
-        .improvement {
-            background: #e6ffed;
-            border-left: 4px solid #48bb78;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-        .improvement strong {
-            color: #22543d;
-        }
-        .sample-topics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .topic-tag {
-            background: #f0f4ff;
-            padding: 10px 15px;
-            border-radius: 6px;
-            border-left: 3px solid #667eea;
-            font-size: 13px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIH Topic Hierarchy - Interactive Visualization</title>
+<style>
+body { font-family: sans-serif; margin: 0; padding: 20px; background: #f5f7fa; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { color: #667eea; }
+.info { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.info p { margin: 10px 0; line-height: 1.6; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+.stat-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.stat-card h3 { margin: 0 0 10px 0; color: #667eea; }
+.stat-card p { margin: 0; font-size: 24px; font-weight: bold; color: #764ba2; }
+a { color: #667eea; text-decoration: none; font-weight: bold; }
+a:hover { text-decoration: underline; }
+button { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; text-decoration: none; display: inline-block; }
+button:hover { background: #5568d3; }
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>🧬 NIH Topic Maps</h1>
-        <p class="subtitle">Interactive Analysis of 43,000 NIH Grants using PROJECT_TERMS</p>
-        <div class="badge">✨ NEW: PROJECT_TERMS Clustering - 2x Better Quality</div>
-    </div>
+<div class="container">
+<h1>🧬 NIH Grant Topic Hierarchy - Interactive Visualization</h1>
 
-    <div class="card">
-        <h2>🎯 What's New</h2>
-        <div class="improvement">
-            <strong>PROJECT_TERMS Approach:</strong> Uses NIH's curated research keywords instead of full abstracts for better focus and interpretability.
-        </div>
-        <ul>
-            <li><strong>117% better silhouette score</strong> (0.0391 vs 0.0180)</li>
-            <li><strong>50% fewer over-generic clusters</strong> (7 vs 14)</li>
-            <li><strong>100 interpretable topics</strong> with auto-generated labels</li>
-            <li><strong>Auto-labeled from keywords</strong> - meaningful research themes</li>
-        </ul>
-    </div>
+<div class="info">
+<h2>3-Level Hierarchical Analysis of 43,320 NIH Grants (FY 2000-2024)</h2>
+<p>This interactive visualization maps the entire NIH grant portfolio across three hierarchical levels:</p>
+<ul>
+<li><strong>5 Domains:</strong> Strategic research areas with improved spatial coalescence</li>
+<li><strong>13 Topics:</strong> Natural subdivisions within each domain</li>
+<li><strong>24 Subtopics:</strong> Distinctive research focus areas</li>
+</ul>
+</div>
 
-    <div class="card">
-        <h2>Dataset Overview</h2>
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value">43,320</div>
-                <div class="stat-label">Grants</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">100</div>
-                <div class="stat-label">Topics</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">2000-2024</div>
-                <div class="stat-label">Years</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">27</div>
-                <div class="stat-label">NIH ICs</div>
-            </div>
-        </div>
-    </div>
+<div class="stats">
+<div class="stat-card">
+<h3>Total Grants</h3>
+<p>43,320</p>
+</div>
+<div class="stat-card">
+<h3>Time Period</h3>
+<p>2000-2024</p>
+</div>
+<div class="stat-card">
+<h3>Domains</h3>
+<p>5</p>
+</div>
+<div class="stat-card">
+<h3>Topics</h3>
+<p>13</p>
+</div>
+<div class="stat-card">
+<h3>Subtopics</h3>
+<p>24</p>
+</div>
+</div>
 
-    <div class="card">
-        <h2>Sample Topics</h2>
-        <p>Auto-generated from PROJECT_TERMS keywords:</p>
-        <div class="sample-topics">
-            <div class="topic-tag"><strong>Cluster 0:</strong> programs / research / testing</div>
-            <div class="topic-tag"><strong>Cluster 1:</strong> genes / variation / genetics</div>
-            <div class="topic-tag"><strong>Cluster 2:</strong> clinical research / human subject</div>
-            <div class="topic-tag"><strong>Cluster 3:</strong> xenograft / cells / human</div>
-            <div class="topic-tag"><strong>Cluster 8:</strong> nucleic acid / protein structure</div>
-        </div>
-    </div>
+<div class="info">
+<h2>Interactive Features</h2>
+<ul>
+<li>✓ Toggle between Domains, Topics, and Subtopics views</li>
+<li>✓ Filter by domain, IC/Center, and year range</li>
+<li>✓ Hover over points for grant details (IC, year, cost, research area)</li>
+<li>✓ Real-time visible grant count</li>
+<li>✓ UMAP spatial layout showing research similarity</li>
+</ul>
+</div>
 
-    <div class="card">
-        <h2>Explore the Data</h2>
-        <p>Choose an interactive visualization:</p>
-        <a href="https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/topic_map_interactive.html" class="btn btn-secondary">🗺️ Interactive Topic Map (Legacy)</a>
-        <a href="https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data_project_terms_k100.json" class="btn">📊 New Visualization Data (JSON)</a>
-    </div>
+<button onclick="window.location.href='viz_3level_hierarchy.html'">Open Interactive Visualization →</button>
 
-    <div class="card">
-        <h2>Technical Details</h2>
-        <ul>
-            <li><strong>Embeddings:</strong> PubMedBERT (768-dim) on PROJECT_TERMS field</li>
-            <li><strong>Clustering:</strong> K-Means with K=100</li>
-            <li><strong>Coordinates:</strong> UMAP dimensionality reduction</li>
-            <li><strong>Quality:</strong> Silhouette score 0.0391 - 2x better than full-text</li>
-            <li><strong>Labels:</strong> Auto-generated from top PROJECT_TERMS keywords</li>
-        </ul>
-    </div>
+<div class="info" style="margin-top: 30px;">
+<h2>Documentation</h2>
+<p><a href="HIERARCHY_SUMMARY.txt">📄 Read the full analysis report</a></p>
+<p><a href="viz_data_3level_hierarchy.json">📊 Download the hierarchical data (JSON)</a></p>
+</div>
 
-    <div class="card">
-        <h2>About This Analysis</h2>
-        <p>This enhanced analysis uses PubMedBERT embeddings applied to NIH PROJECT_TERMS (curated research keywords) to identify 100 research topics across 43,320 NIH grants from fiscal years 2000-2024.</p>
-        <p><strong>Key Improvement:</strong> PROJECT_TERMS approach provides superior clustering quality and more interpretable topic labels compared to full-text abstracts.</p>
-    </div>
-
-    <div class="card" style="background: #f0f4ff; border-left: 4px solid #667eea;">
-        <h3>Next Steps</h3>
-        <p>The new visualization with 100 PROJECT_TERMS clusters is ready for deployment. Features coming soon:</p>
-        <ul>
-            <li>Interactive UMAP scatter plot with hover details</li>
-            <li>Filter by IC, year, and cluster</li>
-            <li>Search functionality</li>
-            <li>Topic profile pages with funding trends</li>
-        </ul>
-    </div>
+<div class="info" style="margin-top: 30px; background: #f0f0f0; border-left: 4px solid #667eea;">
+<h3>Project Summary</h3>
+<p><strong>Objective:</strong> Create a multi-level hierarchical clustering of 43,320 NIH grants with improved spatial coalescence and distinctive subtopic labeling.</p>
+<p><strong>Method:</strong> 3-level K-means hierarchical clustering on UMAP embeddings with MeSH-based semantic labeling.</p>
+<p><strong>Result:</strong> 5 domains → 13 topics → 24 distinctive subtopics with balanced portfolio distribution.</p>
+<p><strong>Date:</strong> December 1, 2025</p>
+</div>
+</div>
 </body>
 </html>
