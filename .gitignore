@@ -1,32 +1,9 @@
-# Data files (too large for git)
-data/raw/
+# Large data files
+grants_*.json
+*.json.bak
 *.parquet
-*.csv
-*.xlsx
 
-# Temporary files
-*.tmp
-*.log
-validation_reports/*.txt
-
-# Python
+# Temp files
+*.pyc
 __pycache__/
-*.py[cod]
-*$py.class
-.env
-venv/
-.venv/
-
-# Google Cloud
-.gcloud/
-*.json.key
-
-# OS
 .DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
