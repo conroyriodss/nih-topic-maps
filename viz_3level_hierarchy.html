@@ -1,72 +1,106 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>NIH Topic Map</title>
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: sans-serif; background: #f5f7fa; overflow: hidden; }
-.header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; }
-h1 { margin: 0; font-size: 24px; }
-p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.9; }
-.container { display: flex; height: calc(100vh - 70px); }
-.controls { width: 340px; background: white; border-right: 1px solid #ddd; padding: 20px; overflow-y: auto; }
-.viz { flex: 1; position: relative; background: white; }
-canvas { display: block; width: 100%; height: 100%; }
-.tooltip { position: absolute; background: rgba(0,0,0,0.95); color: white; padding: 12px; border-radius: 6px; font-size: 12px; display: none; z-index: 50; }
-button { width: 100%; padding: 8px; margin: 5px 0; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
-button:hover { background: #5568d3; }
-button.active { background: #764ba2; }
-select { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
-input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; box-sizing: border-box; }
-label { display: block; font-weight: 600; font-size: 12px; margin-top: 10px; margin-bottom: 3px; }
-.stats { background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 12px; margin-top: 20px; }
-</style>
-</head>
-<body>
-<div class="header">
-<h1>NIH Topic Map</h1>
-<p>43,320 grants | 5 domains × 13 topics × 24 subtopics</p>
-</div>
-<div class="container">
-<div class="controls">
-<button id="b1" class="active" onclick="switchView('domains')">Domains (5)</button>
-<button id="b2" onclick="switchView('topics')">Topics (13)</button>
-<button id="b3" onclick="switchView('subtopics')">Subtopics (24)</button>
-<label for="df">Domain:</label>
-<select id="df" multiple size="5"><option>All</option></select>
-<label for="if">IC:</label>
-<select id="if" multiple size="4"><option>All</option></select>
-<label for="yn">Year Min:</label>
-<input type="number" id="yn" value="2000" min="2000" max="2024">
-<label for="yx">Year Max:</label>
-<input type="number" id="yx" value="2024" min="2000" max="2024">
-<button onclick="resetFilters()">Reset</button>
-<div class="stats">
-<div style="display:flex;justify-content:space-between;margin:5px 0"><span>Visible:</span><span id="vc">0</span></div>
-<div style="display:flex;justify-content:space-between;margin:5px 0"><span>ICs:</span><span id="ic">0</span></div>
-</div>
-</div>
-<div class="viz">
-anvas></canvas>
-<div id="tt" class="tooltip"></div>
-</div>
-</div>
-<script>
-console.log('=== SCRIPT STARTING ===');
-let data=null,canvas=null,ctx=null,view='domains',pts=[],filters={d:[],i:[],yn:2000,yx:2024};
-const colors=['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6'];
-function init(){console.log('=== INIT CALLED ===');canvas=document.querySelector('canvas');console.log('Canvas found:',!!canvas,canvas);if(!canvas){console.error('FATAL: Canvas not found');return false;}ctx=canvas.getContext('2d');console.log('2D context:',!!ctx);if(!ctx){console.error('FATAL: No 2D context');return false;}return true;}
-function setup(){console.log('=== SETUP CALLED ===');canvas.width=canvas.parentElement.clientWidth;canvas.height=canvas.parentElement.clientHeight;console.log('Canvas dimensions:',canvas.width,'x',canvas.height);const xe=d3.extent(data.points,p=>p.x);const ye=d3.extent(data.points,p=>p.y);console.log('Data extent x:',xe,'y:',ye);window.xs=d3.scaleLinear().domain(xe).range([30,canvas.width-30]);window.ys=d3.scaleLinear().domain(ye).range([canvas.height-30,30]);canvas.addEventListener('mousemove',e=>{const rect=canvas.getBoundingClientRect();const mx=e.clientX-rect.left,my=e.clientY-rect.top;for(let p of pts){if(Math.abs(xs(p.x)-mx)<5&&Math.abs(ys(p.y)-my)<5){const dom=data.domains.find(d=>d.id===p.domain);document.getElementById('tt').innerHTML='<b>'+p.ic+'</b> '+p.year+'<br>$'+(p.cost/1e6).toFixed(2)+'M<br>'+dom.label;document.getElementById('tt').style.left=mx+20+'px';document.getElementById('tt').style.top=my+10+'px';document.getElementById('tt').style.display='block';return;}}document.getElementById('tt').style.display='none';});populateFilters();draw();console.log('Setup complete');}
-function populateFilters(){console.log('=== POPULATE FILTERS ===');let df=document.getElementById('df');df.innerHTML='<option>All</option>'+data.domains.map(d=>'<option value="'+d.id+'">'+d.label+'</option>').join('');let ics=[...new Set(data.points.map(p=>p.ic))].sort();document.getElementById('if').innerHTML='<option>All</option>'+ics.map(i=>'<option>'+i+'</option>').join('');document.getElementById('ic').textContent=ics.length;console.log('Filters populated, ICs:',ics.length);df.onchange=()=>{filters.d=Array.from(df.selectedOptions).map(o=>o.value);draw();};document.getElementById('if').onchange=()=>{filters.i=Array.from(document.getElementById('if').selectedOptions).map(o=>o.value);draw();};document.getElementById('yn').onchange=()=>{filters.yn=parseInt(document.getElementById('yn').value);draw();};document.getElementById('yx').onchange=()=>{filters.yx=parseInt(document.getElementById('yx').value);draw();};}
-function draw(){pts=data.points.filter(p=>{let ok=true;if(filters.d.length>0&&!filters.d.includes('All')&&!filters.d.includes(p.domain.toString()))ok=false;if(filters.i.length>0&&!filters.i.includes('All')&&!filters.i.includes(p.ic))ok=false;if(p.year<filters.yn||p.year>filters.yx)ok=false;return ok;});document.getElementById('vc').textContent=pts.length.toLocaleString();render();}
-function render(){if(!ctx)return;ctx.clearRect(0,0,canvas.width,canvas.height);let ps=new Set(pts.map(p=>p.application_id));data.points.forEach(p=>{let col=view==='domains'?colors[p.domain]:view==='topics'?d3.interpolateRainbow(p.topic/13):d3.interpolateRainbow(p.subtopic/24);ctx.fillStyle=col;ctx.globalAlpha=ps.has(p.application_id)?0.7:0.06;ctx.beginPath();ctx.arc(xs(p.x),ys(p.y),2.5,0,6.28);ctx.fill();});ctx.globalAlpha=1;}
-function switchView(v){view=v;document.getElementById('b1').classList.toggle('active',v==='domains');document.getElementById('b2').classList.toggle('active',v==='topics');document.getElementById('b3').classList.toggle('active',v==='subtopics');render();}
-function resetFilters(){filters={d:[],i:[],yn:2000,yx:2024};document.getElementById('df').selectedIndex=0;document.getElementById('if').selectedIndex=0;document.getElementById('yn').value=2000;document.getElementById('yx').value=2024;draw();}
-console.log('Document ready state:',document.readyState);
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',()=>{console.log('DOMContentLoaded event fired');if(init()){fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data_3level_hierarchy.json').then(r=>r.json()).then(d=>{console.log('Data loaded:',d.points.length,'points');data=d;setup();}).catch(e=>console.error('Data error:',e));}});}else{console.log('DOM already loaded, initializing now');if(init()){fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data_3level_hierarchy.json').then(r=>r.json()).then(d=>{console.log('Data loaded:',d.points.length,'points');data=d;setup();}).catch(e=>console.error('Data error:',e));}}
-console.log('Script initialization complete');
-</script>
-</body>
-</html>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>NIH Map - Improved Layout</title><script src="https://d3js.org/d3.v7.min.js"></script><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;background:#f5f7fa;overflow:hidden}.header{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:20px}h1{margin:0;font-size:24px}p{margin:5px 0 0 0;font-size:13px}.container{display:flex;height:calc(100vh - 70px)}.controls{width:340px;background:white;border-right:1px solid #ddd;padding:20px;overflow-y:auto}.viz{flex:1;position:relative;background:white}button{width:100%;padding:8px;margin:5px 0;background:#667eea;color:white;border:none;border-radius:4px;cursor:pointer}button:hover{background:#5568d3}button.active{background:#764ba2}select,input{width:100%;padding:8px;margin:5px 0;border:1px solid #ddd;border-radius:4px;box-sizing:border-box}label{display:block;font-weight:600;font-size:12px;margin-top:10px}.stats{background:#f8f9fa;padding:15px;border-radius:6px;font-size:12px;margin-top:20px}.tooltip{position:absolute;background:rgba(0,0,0,0.95);color:white;padding:12px;border-radius:6px;font-size:12px;display:none;z-index:50}</style></head><body><div class="header"><h1>NIH Topic Map (Improved Layout)</h1><p>43,320 grants | Tighter clustering + domain regions</p></div><div class="container"><div class="controls"><button id="b1" class="active" onclick="switchView('domains')">Domains</button><button id="b2" onclick="switchView('topics')">Topics</button><button id="b3" onclick="switchView('subtopics')">Subtopics</button><label for="df">Domain:</label><select id="df" multiple size="5"><option>All</option></select><label for="if">IC:</label><select id="if" multiple size="4"><option>All</option></select><label for="yn">Year Min:</label><input type="number" id="yn" value="2000" min="2000" max="2024"><label for="yx">Year Max:</label><input type="number" id="yx" value="2024" min="2000" max="2024"><button onclick="resetFilters()">Reset</button><div class="stats"><div style="display:flex;justify-content:space-between"><span>Visible:</span><span id="vc">0</span></div><div style="display:flex;justify-content:space-between"><span>ICs:</span><span id="ic">0</span></div></div></div><div class="viz" id="vz"></div><div id="tt" class="tooltip"></div></div><script>
+const vz = document.getElementById('vz');
+const canvas = document.createElement('canvas');
+vz.appendChild(canvas);
+console.log('Canvas created');
+
+let d=null, v='domains', p=[], f={d:[], i:[], yn:2000, yx:2024}, regions=null;
+const col=['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6'];
+const x = canvas.getContext('2d');
+canvas.width = vz.clientWidth;
+canvas.height = vz.clientHeight;
+console.log('Canvas size:', canvas.width, 'x', canvas.height);
+
+Promise.all([
+  fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data_3level_hierarchy_tight.json').then(r => r.json()),
+  fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/domain_regions.json').then(r => r.json())
+])
+.then(([data, regs]) => {
+  d = data;
+  regions = regs;
+  console.log('Data loaded:', d.points.length, 'points');
+  console.log('Regions loaded:', Object.keys(regions).length, 'domains');
+  
+  let xe = d3.extent(d.points, pt => pt.x);
+  let ye = d3.extent(d.points, pt => pt.y);
+  window.xs = d3.scaleLinear().domain(xe).range([30, canvas.width-30]);
+  window.ys = d3.scaleLinear().domain(ye).range([canvas.height-30, 30]);
+  
+  let df = document.getElementById('df');
+  df.innerHTML = '<option>All</option>' + d.domains.map(dm => '<option value="' + dm.id + '">' + dm.label + '</option>').join('');
+  let ics = [...new Set(d.points.map(pt => pt.ic))].sort();
+  document.getElementById('if').innerHTML = '<option>All</option>' + ics.map(ic => '<option>' + ic + '</option>').join('');
+  document.getElementById('ic').textContent = ics.length;
+  
+  df.onchange = () => { f.d = Array.from(df.selectedOptions).map(o => o.value); draw(); };
+  document.getElementById('if').onchange = () => { f.i = Array.from(document.getElementById('if').selectedOptions).map(o => o.value); draw(); };
+  document.getElementById('yn').onchange = () => { f.yn = parseInt(document.getElementById('yn').value); draw(); };
+  document.getElementById('yx').onchange = () => { f.yx = parseInt(document.getElementById('yx').value); draw(); };
+  
+  canvas.addEventListener('mousemove', e => {
+    let r = canvas.getBoundingClientRect();
+    let mx = e.clientX - r.left, my = e.clientY - r.top;
+    for (let pt of p) {
+      if (Math.abs(xs(pt.x) - mx) < 5 && Math.abs(ys(pt.y) - my) < 5) {
+        let dm = d.domains.find(a => a.id === pt.domain);
+        document.getElementById('tt').innerHTML = '<b>' + pt.ic + '</b> ' + pt.year + '<br>$' + (pt.cost/1e6).toFixed(2) + 'M<br>' + dm.label;
+        document.getElementById('tt').style.left = mx + 20 + 'px';
+        document.getElementById('tt').style.top = my + 10 + 'px';
+        document.getElementById('tt').style.display = 'block';
+        return;
+      }
+    }
+    document.getElementById('tt').style.display = 'none';
+  });
+  
+  function drawDomainRegions() {
+    for (let domId in regions) {
+      let reg = regions[domId];
+      let x1 = xs(reg.x_min), y1 = ys(reg.y_max);
+      let x2 = xs(reg.x_max), y2 = ys(reg.y_min);
+      let w = x2 - x1, h = y2 - y1;
+      
+      x.fillStyle = col[domId];
+      x.globalAlpha = 0.04;
+      x.fillRect(x1, y1, w, h);
+      
+      x.strokeStyle = col[domId];
+      x.globalAlpha = 0.15;
+      x.lineWidth = 2;
+      x.strokeRect(x1, y1, w, h);
+    }
+    x.globalAlpha = 1;
+  }
+  
+  function draw() {
+    p = d.points.filter(pt => {
+      let ok = true;
+      if (f.d.length > 0 && !f.d.includes('All') && !f.d.includes(pt.domain.toString())) ok = false;
+      if (f.i.length > 0 && !f.i.includes('All') && !f.i.includes(pt.ic)) ok = false;
+      if (pt.year < f.yn || pt.year > f.yx) ok = false;
+      return ok;
+    });
+    document.getElementById('vc').textContent = p.length.toLocaleString();
+    
+    x.clearRect(0, 0, canvas.width, canvas.height);
+    drawDomainRegions();
+    
+    let ps = new Set(p.map(pt => pt.application_id));
+    d.points.forEach(pt => {
+      let clr = v === 'domains' ? col[pt.domain] : v === 'topics' ? d3.interpolateRainbow(pt.topic / 13) : d3.interpolateRainbow(pt.subtopic / 24);
+      x.fillStyle = clr;
+      x.globalAlpha = ps.has(pt.application_id) ? 0.7 : 0.06;
+      x.beginPath();
+      x.arc(xs(pt.x), ys(pt.y), 2.5, 0, 6.28);
+      x.fill();
+    });
+    x.globalAlpha = 1;
+  }
+  
+  window.switchView = v2 => { v = v2; document.getElementById('b1').classList.toggle('active', v2 === 'domains'); document.getElementById('b2').classList.toggle('active', v2 === 'topics'); document.getElementById('b3').classList.toggle('active', v2 === 'subtopics'); draw(); };
+  window.resetFilters = () => { f = {d:[], i:[], yn:2000, yx:2024}; document.getElementById('df').selectedIndex = 0; document.getElementById('if').selectedIndex = 0; document.getElementById('yn').value = 2000; document.getElementById('yx').value = 2024; draw(); };
+  
+  draw();
+})
+.catch(e => alert('Error: ' + e.message));
+</script></body></html>
