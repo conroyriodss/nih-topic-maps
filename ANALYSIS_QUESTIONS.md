@@ -53,3 +53,49 @@
    - Cross-cutting opportunities?
    - Emerging trends to support?
 
+
+## Completed Milestones (December 2, 2025)
+
+### ✅ 250K Grant Processing
+- **Status**: Complete
+- **Grants**: 250,000 (FY 2019-2024)
+- **Domains**: 10 major research areas identified
+- **Infrastructure**: GCP VM (n1-standard-16)
+- **Runtime**: ~37 minutes
+- **Cost**: ~$10
+
+### ✅ Interactive Visualization
+- **File**: `nih_topic_map_250k_domains.html`
+- **Features**:
+  - Domain heatmaps
+  - 50K grant sample displayed
+  - Filtering by IC, FY, keywords
+  - Award detail cards
+  - Zoom/pan navigation
+
+### Key Files Generated
+1. `hierarchical_250k_with_umap.csv` - Full dataset
+2. `nih_topic_map_250k_domains.html` - Visualization
+3. `create-viz-250k-complete.py` - Generator script
+
+## Next Priority: Hierarchical Expansion
+
+**Goal**: Split 10 domains → 30 topics → 100 subtopics
+
+**Approach**:
+1. Use domain assignments as starting point
+2. Re-cluster each domain independently
+3. Generate 3-level hierarchy
+4. Update visualization with drill-down
+
+**Timeline**: ~1 week development + 2 hours compute
+
+## Storage Status
+
+**GCS Bucket**: `gs://od-cl-odss-conroyri-nih-embeddings/`
+- ✅ `hierarchical_250k_with_umap.csv` (43 MB)
+- ✅ All processing scripts backed up
+- ✅ Repository synced to GitHub
+
+---
+*Updated: December 2, 2025*
