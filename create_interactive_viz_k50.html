@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>NIH Topic Maps - K=50 Hybrid Clustering</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        #container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            margin: 0 0 10px 0;
+            color: #1a1a1a;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        #controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        select, input {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        select {
+            min-width: 200px;
+        }
+        
+        #viz-container {
+            position: relative;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        
+        .tooltip {
+            position: absolute;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 6px;
+            pointer-events: none;
+            font-size: 12px;
+            max-width: 350px;
+            z-index: 1000;
+            line-height: 1.5;
+        }
+        
+        .tooltip strong {
+            color: #4fc3f7;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+        
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            padding: 4px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .legend-item:hover {
+            background: #e3f2fd;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        
+        .legend-count {
+            margin-left: auto;
+            color: #666;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>NIH Research Portfolio Topic Map</h1>
+        <div class="subtitle">
+            Interactive visualization of 12,491 NIH grants (FY 2000-2024) • 50 topics via hybrid hierarchical clustering • 
+            Silhouette score: +0.0015 • Embedding: PubMedBERT + RCDC + IC + Terms (lemmatized)
+        </div>
+        
+        <div id="controls">
+            <div class="control-group">
+                <label for="ic-filter">Institute/Center:</label>
+                <select id="ic-filter">
+                    <option value="all">All ICs</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="topic-filter">Topic:</label>
+                <select id="topic-filter">
+                    <option value="all">All Topics</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="fy-min">FY Range:</label>
+                <input type="number" id="fy-min" value="2000" min="2000" max="2024" style="width: 70px;">
+                <span>to</span>
+                <input type="number" id="fy-max" value="2024" min="2000" max="2024" style="width: 70px;">
+            </div>
+            
+            <div class="control-group">
+                <label for="search">Search:</label>
+                <input type="text" id="search" placeholder="Search project titles..." style="min-width: 250px;">
+            </div>
+        </div>
+        
+        <div id="viz-container"></div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Total Grants Displayed</div>
+                <div class="stat-value" id="stat-grants">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Total Funding</div>
+                <div class="stat-value" id="stat-funding">$0B</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Active Topics</div>
+                <div class="stat-value" id="stat-topics">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Date Range</div>
+                <div class="stat-value" id="stat-years">-</div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-title">Topics (click to filter)</div>
+            <div class="legend-items" id="legend"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const width = 1760;
+        const height = 900;
+        const margin = {top: 20, right: 20, bottom: 20, left: 20};
+        
+        // Color scale
+        const colorScale = d3.scaleOrdinal(d3.schemeTableau10.concat(d3.schemePaired));
+        
+        // Create SVG
+        const svg = d3.select("#viz-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        
+        const g = svg.append("g");
+        
+        // Tooltip
+        const tooltip = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+        
+        // Zoom
+        const zoom = d3.zoom()
+            .scaleExtent([0.5, 10])
+            .on("zoom", (event) => {
+                g.attr("transform", event.transform);
+            });
+        
+        svg.call(zoom);
+        
+        let allData = [];
+        let filteredData = [];
+        let selectedTopic = null;
+        
+        // Load data
+        d3.csv("clustering_k50_with_umap.csv").then(data => {
+            // Parse data
+            allData = data.map(d => ({
+                id: d.APPLICATION_ID,
+                title: d.PROJECT_TITLE || d.title_short || "Untitled",
+                ic: d.IC_NAME,
+                fy: +d.FY,
+                funding: +d.TOTAL_COST || 0,
+                cluster: +d.cluster,
+                topic: d.topic_label,
+                x: +d.umap_x,
+                y: +d.umap_y
+            }));
+            
+            // Populate filters
+            const ics = [...new Set(allData.map(d => d.ic))].sort();
+            const icSelect = d3.select("#ic-filter");
+            ics.forEach(ic => {
+                icSelect.append("option").attr("value", ic).text(ic);
+            });
+            
+            const topics = [...new Set(allData.map(d => d.topic))].sort();
+            const topicSelect = d3.select("#topic-filter");
+            topics.forEach(topic => {
+                topicSelect.append("option").attr("value", topic).text(topic);
+            });
+            
+            // Create legend
+            const topicCounts = d3.rollup(allData, v => v.length, d => d.topic);
+            const sortedTopics = Array.from(topicCounts.entries())
+                .sort((a, b) => b[1] - a[1])
+                .map(d => d[0]);
+            
+            const legend = d3.select("#legend");
+            sortedTopics.forEach((topic, i) => {
+                const cluster = allData.find(d => d.topic === topic).cluster;
+                const item = legend.append("div")
+                    .attr("class", "legend-item")
+                    .on("click", () => {
+                        if (selectedTopic === topic) {
+                            selectedTopic = null;
+                            d3.select("#topic-filter").property("value", "all");
+                        } else {
+                            selectedTopic = topic;
+                            d3.select("#topic-filter").property("value", topic);
+                        }
+                        updateVisualization();
+                    });
+                
+                item.append("div")
+                    .attr("class", "legend-color")
+                    .style("background-color", colorScale(cluster));
+                
+                item.append("span")
+                    .text(topic);
+                
+                item.append("span")
+                    .attr("class", "legend-count")
+                    .text(`n=${topicCounts.get(topic)}`);
+            });
+            
+            // Event listeners
+            d3.select("#ic-filter").on("change", updateVisualization);
+            d3.select("#topic-filter").on("change", updateVisualization);
+            d3.select("#fy-min").on("input", updateVisualization);
+            d3.select("#fy-max").on("input", updateVisualization);
+            d3.select("#search").on("input", updateVisualization);
+            
+            // Initial render
+            updateVisualization();
+        });
+        
+        function updateVisualization() {
+            const icFilter = d3.select("#ic-filter").property("value");
+            const topicFilter = d3.select("#topic-filter").property("value");
+            const fyMin = +d3.select("#fy-min").property("value");
+            const fyMax = +d3.select("#fy-max").property("value");
+            const searchTerm = d3.select("#search").property("value").toLowerCase();
+            
+            // Filter data
+            filteredData = allData.filter(d => {
+                if (icFilter !== "all" && d.ic !== icFilter) return false;
+                if (topicFilter !== "all" && d.topic !== topicFilter) return false;
+                if (d.fy < fyMin || d.fy > fyMax) return false;
+                if (searchTerm && !d.title.toLowerCase().includes(searchTerm)) return false;
+                return true;
+            });
+            
+            // Update stats
+            d3.select("#stat-grants").text(filteredData.length.toLocaleString());
+            const totalFunding = d3.sum(filteredData, d => d.funding);
+            d3.select("#stat-funding").text(`$${(totalFunding / 1e9).toFixed(2)}B`);
+            const activeTopics = new Set(filteredData.map(d => d.topic)).size;
+            d3.select("#stat-topics").text(activeTopics);
+            const years = d3.extent(filteredData, d => d.fy);
+            d3.select("#stat-years").text(years[0] + " - " + years[1]);
+            
+            // Scales
+            const xExtent = d3.extent(filteredData, d => d.x);
+            const yExtent = d3.extent(filteredData, d => d.y);
+            const xPadding = (xExtent[1] - xExtent[0]) * 0.05;
+            const yPadding = (yExtent[1] - yExtent[0]) * 0.05;
+            
+            const xScale = d3.scaleLinear()
+                .domain([xExtent[0] - xPadding, xExtent[1] + xPadding])
+                .range([margin.left, width - margin.right]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([yExtent[0] - yPadding, yExtent[1] + yPadding])
+                .range([height - margin.bottom, margin.top]);
+            
+            // Bind data
+            const circles = g.selectAll("circle")
+                .data(filteredData, d => d.id);
+            
+            // Exit
+            circles.exit()
+                .transition()
+                .duration(300)
+                .attr("r", 0)
+                .remove();
+            
+            // Enter + Update
+            circles.enter()
+                .append("circle")
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 0)
+                .attr("fill", d => colorScale(d.cluster))
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 0.5)
+                .attr("opacity", 0.7)
+                .on("mouseover", function(event, d) {
+                    d3.select(this)
+                        .attr("stroke", "#000")
+                        .attr("stroke-width", 2)
+                        .attr("opacity", 1);
+                    
+                    tooltip.transition().duration(200).style("opacity", 1);
+                    tooltip.html(`
+                        <strong>${d.title}</strong><br>
+                        <strong>Topic:</strong> ${d.topic}<br>
+                        <strong>IC:</strong> ${d.ic}<br>
+                        <strong>FY:</strong> ${d.fy}<br>
+                        <strong>Funding:</strong> $${(d.funding / 1e6).toFixed(2)}M
+                    `)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .attr("stroke", "#fff")
+                        .attr("stroke-width", 0.5)
+                        .attr("opacity", 0.7);
+                    
+                    tooltip.transition().duration(200).style("opacity", 0);
+                })
+                .merge(circles)
+                .transition()
+                .duration(500)
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 3);
+        }
+    </script>
+</body>
+</html>

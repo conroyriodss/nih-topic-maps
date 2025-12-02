@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>NIH Topic Maps - Hierarchical View</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        #container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            margin: 0 0 5px 0;
+            color: #1a1a1a;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            font-size: 13px;
+            align-items: center;
+        }
+        
+        .breadcrumb-item {
+            cursor: pointer;
+            color: #1976d2;
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-item:hover {
+            color: #0d47a1;
+        }
+        
+        .breadcrumb-separator {
+            color: #999;
+        }
+        
+        #controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        select, input, button {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #1976D2;
+        }
+        
+        #viz-container {
+            position: relative;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        
+        .tooltip {
+            position: absolute;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 6px;
+            pointer-events: none;
+            font-size: 12px;
+            max-width: 350px;
+            z-index: 1000;
+            line-height: 1.5;
+        }
+        
+        .tooltip strong {
+            color: #4fc3f7;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+            font-size: 14px;
+        }
+        
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 6px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            padding: 6px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: background 0.2s;
+        }
+        
+        .legend-item:hover {
+            background: #e3f2fd;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        
+        .legend-count {
+            margin-left: auto;
+            color: #666;
+            font-size: 11px;
+        }
+        
+        .view-level {
+            padding: 8px 15px;
+            background: #4caf50;
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>NIH Research Portfolio - Hierarchical Topic Map</h1>
+        <div class="subtitle">
+            12,491 NIH grants (FY 2000-2024) • 3-Level Hierarchy: Domain → Topic → Subtopic • 
+            Hybrid clustering (PubMedBERT + RCDC + Terms) • Clusters by science, not IC
+        </div>
+        
+        <div class="breadcrumb" id="breadcrumb">
+            <span class="breadcrumb-item" onclick="resetToAll()">All Domains</span>
+            <span id="breadcrumb-extra"></span>
+        </div>
+        
+        <div id="controls">
+            <div class="view-level" id="view-level">Viewing: All 10 Domains</div>
+            
+            <div class="control-group">
+                <label for="ic-filter">Institute:</label>
+                <select id="ic-filter">
+                    <option value="all">All ICs</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="fy-min">FY:</label>
+                <input type="number" id="fy-min" value="2000" min="2000" max="2024" style="width: 70px;">
+                <span>to</span>
+                <input type="number" id="fy-max" value="2024" min="2000" max="2024" style="width: 70px;">
+            </div>
+            
+            <div class="control-group">
+                <label for="search">Search:</label>
+                <input type="text" id="search" placeholder="Search titles..." style="min-width: 200px;">
+            </div>
+            
+            <button onclick="resetToAll()">Reset View</button>
+        </div>
+        
+        <div id="viz-container"></div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Grants Displayed</div>
+                <div class="stat-value" id="stat-grants">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Total Funding</div>
+                <div class="stat-value" id="stat-funding">$0B</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Current Level</div>
+                <div class="stat-value" id="stat-level">Domain</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Date Range</div>
+                <div class="stat-value" id="stat-years">-</div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-title" id="legend-title">10 Scientific Domains (click to explore)</div>
+            <div class="legend-items" id="legend"></div>
+        </div>
+    </div>
+    
+    <script>
+        const width = 1760;
+        const height = 900;
+        const margin = {top: 20, right: 20, bottom: 20, left: 20};
+        
+        const domainColors = d3.scaleOrdinal()
+            .domain([1,2,3,4,5,6,7,8,9,10])
+            .range(['#e57373', '#81c784', '#64b5f6', '#ffb74d', '#ba68c8', 
+                    '#4db6ac', '#ff8a65', '#aed581', '#90caf9', '#a1887f']);
+        
+        const svg = d3.select("#viz-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        
+        const g = svg.append("g");
+        
+        const tooltip = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+        
+        const zoom = d3.zoom()
+            .scaleExtent([0.5, 10])
+            .on("zoom", (event) => g.attr("transform", event.transform));
+        
+        svg.call(zoom);
+        
+        let allData = [];
+        let currentView = 'domain';  // 'domain', 'topic', 'subtopic'
+        let selectedDomain = null;
+        let selectedTopic = null;
+        
+        d3.csv("hierarchical_with_umap.csv").then(data => {
+            allData = data.map(d => ({
+                id: d.APPLICATION_ID,
+                title: d.PROJECT_TITLE,
+                ic: d.IC_NAME,
+                fy: +d.FY,
+                funding: +d.TOTAL_COST || 0,
+                domain: +d.domain,
+                domain_label: d.domain_label,
+                topic: +d.topic,
+                topic_label: d.topic_label,
+                subtopic: +d.subtopic,
+                subtopic_label: d.subtopic_label,
+                x: +d.umap_x,
+                y: +d.umap_y
+            }));
+            
+            // Populate IC filter
+            const ics = [...new Set(allData.map(d => d.ic))].sort();
+            const icSelect = d3.select("#ic-filter");
+            ics.forEach(ic => icSelect.append("option").attr("value", ic).text(ic));
+            
+            // Event listeners
+            d3.select("#ic-filter").on("change", updateVisualization);
+            d3.select("#fy-min").on("input", updateVisualization);
+            d3.select("#fy-max").on("input", updateVisualization);
+            d3.select("#search").on("input", updateVisualization);
+            
+            updateVisualization();
+        });
+        
+        function resetToAll() {
+            currentView = 'domain';
+            selectedDomain = null;
+            selectedTopic = null;
+            d3.select("#breadcrumb-extra").html('');
+            updateVisualization();
+        }
+        
+        function drillToDomain(domainId) {
+            currentView = 'topic';
+            selectedDomain = domainId;
+            selectedTopic = null;
+            const domainLabel = allData.find(d => d.domain === domainId).domain_label;
+            d3.select("#breadcrumb-extra").html(`
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-item" onclick="drillToDomain(${domainId})">${domainLabel}</span>
+            `);
+            updateVisualization();
+        }
+        
+        function drillToTopic(topicId) {
+            const topicData = allData.find(d => d.topic === topicId);
+            currentView = 'subtopic';
+            selectedDomain = topicData.domain;
+            selectedTopic = topicId;
+            const domainLabel = topicData.domain_label;
+            const topicLabel = topicData.topic_label.split(' > ')[1] || topicData.topic_label;
+            d3.select("#breadcrumb-extra").html(`
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-item" onclick="drillToDomain(${selectedDomain})">${domainLabel}</span>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-item">${topicLabel}</span>
+            `);
+            updateVisualization();
+        }
+        
+        function updateVisualization() {
+            const icFilter = d3.select("#ic-filter").property("value");
+            const fyMin = +d3.select("#fy-min").property("value");
+            const fyMax = +d3.select("#fy-max").property("value");
+            const searchTerm = d3.select("#search").property("value").toLowerCase();
+            
+            // Filter data
+            let filteredData = allData.filter(d => {
+                if (icFilter !== "all" && d.ic !== icFilter) return false;
+                if (d.fy < fyMin || d.fy > fyMax) return false;
+                if (searchTerm && !d.title.toLowerCase().includes(searchTerm)) return false;
+                
+                if (currentView === 'topic' && d.domain !== selectedDomain) return false;
+                if (currentView === 'subtopic' && d.topic !== selectedTopic) return false;
+                
+                return true;
+            });
+            
+            // Update stats
+            d3.select("#stat-grants").text(filteredData.length.toLocaleString());
+            const totalFunding = d3.sum(filteredData, d => d.funding);
+            d3.select("#stat-funding").text(`$${(totalFunding / 1e9).toFixed(2)}B`);
+            d3.select("#stat-level").text(
+                currentView === 'domain' ? 'Domain' : 
+                currentView === 'topic' ? 'Topic' : 'Subtopic'
+            );
+            const years = d3.extent(filteredData, d => d.fy);
+            d3.select("#stat-years").text(years[0] + " - " + years[1]);
+            
+            // Update view level indicator
+            let levelText = '';
+            if (currentView === 'domain') {
+                levelText = 'Viewing: All 10 Domains';
+            } else if (currentView === 'topic') {
+                const domainLabel = allData.find(d => d.domain === selectedDomain).domain_label;
+                levelText = `Viewing: ${domainLabel} Topics`;
+            } else {
+                const topicData = allData.find(d => d.topic === selectedTopic);
+                levelText = `Viewing: ${topicData.topic_label.split(' > ').pop()} Subtopics`;
+            }
+            d3.select("#view-level").text(levelText);
+            
+            // Update legend
+            updateLegend(filteredData);
+            
+            // Render visualization
+            renderPoints(filteredData);
+        }
+        
+        function updateLegend(data) {
+            const legend = d3.select("#legend");
+            legend.selectAll("*").remove();
+            
+            let legendData, titleText;
+            
+            if (currentView === 'domain') {
+                const domainCounts = d3.rollup(data, v => v.length, d => d.domain);
+                legendData = Array.from(domainCounts.entries())
+                    .map(([id, count]) => ({
+                        id, 
+                        label: data.find(d => d.domain === id).domain_label,
+                        count,
+                        color: domainColors(id)
+                    }))
+                    .sort((a, b) => b.count - a.count);
+                titleText = '10 Scientific Domains (click to explore topics)';
+            } else if (currentView === 'topic') {
+                const topicCounts = d3.rollup(data, v => v.length, d => d.topic);
+                legendData = Array.from(topicCounts.entries())
+                    .map(([id, count]) => {
+                        const d = data.find(x => x.topic === id);
+                        return {
+                            id,
+                            label: d.topic_label.split(' > ')[1] || d.topic_label,
+                            count,
+                            color: domainColors(d.domain)
+                        };
+                    })
+                    .sort((a, b) => b.count - a.count);
+                titleText = 'Topics in this domain (click to explore subtopics)';
+            } else {
+                const subtopicCounts = d3.rollup(data, v => v.length, d => d.subtopic);
+                legendData = Array.from(subtopicCounts.entries())
+                    .map(([id, count]) => {
+                        const d = data.find(x => x.subtopic === id);
+                        return {
+                            id,
+                            label: d.subtopic_label.split(' > ').pop() || d.subtopic_label,
+                            count,
+                            color: domainColors(d.domain)
+                        };
+                    })
+                    .sort((a, b) => b.count - a.count);
+                titleText = 'Subtopics (individual grants)';
+            }
+            
+            d3.select("#legend-title").text(titleText);
+            
+            legendData.forEach(item => {
+                const div = legend.append("div")
+                    .attr("class", "legend-item")
+                    .on("click", () => {
+                        if (currentView === 'domain') drillToDomain(item.id);
+                        else if (currentView === 'topic') drillToTopic(item.id);
+                    });
+                
+                div.append("div")
+                    .attr("class", "legend-color")
+                    .style("background-color", item.color);
+                
+                div.append("span").text(item.label);
+                div.append("span")
+                    .attr("class", "legend-count")
+                    .text(`n=${item.count}`);
+            });
+        }
+        
+        function renderPoints(data) {
+            const xExtent = d3.extent(data, d => d.x);
+            const yExtent = d3.extent(data, d => d.y);
+            const xPadding = (xExtent[1] - xExtent[0]) * 0.05;
+            const yPadding = (yExtent[1] - yExtent[0]) * 0.05;
+            
+            const xScale = d3.scaleLinear()
+                .domain([xExtent[0] - xPadding, xExtent[1] + xPadding])
+                .range([margin.left, width - margin.right]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([yExtent[0] - yPadding, yExtent[1] + yPadding])
+                .range([height - margin.bottom, margin.top]);
+            
+            const circles = g.selectAll("circle").data(data, d => d.id);
+            
+            circles.exit()
+                .transition()
+                .duration(300)
+                .attr("r", 0)
+                .remove();
+            
+            circles.enter()
+                .append("circle")
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 0)
+                .attr("fill", d => domainColors(d.domain))
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 0.5)
+                .attr("opacity", 0.7)
+                .on("mouseover", function(event, d) {
+                    d3.select(this)
+                        .attr("stroke", "#000")
+                        .attr("stroke-width", 2)
+                        .attr("opacity", 1);
+                    
+                    tooltip.transition().duration(200).style("opacity", 1);
+                    tooltip.html(`
+                        <strong>${d.title}</strong><br>
+                        <strong>Domain:</strong> ${d.domain_label}<br>
+                        <strong>Topic:</strong> ${d.topic_label.split(' > ')[1]}<br>
+                        <strong>IC:</strong> ${d.ic}<br>
+                        <strong>FY:</strong> ${d.fy}<br>
+                        <strong>Funding:</strong> $${(d.funding / 1e6).toFixed(2)}M
+                    `)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .attr("stroke", "#fff")
+                        .attr("stroke-width", 0.5)
+                        .attr("opacity", 0.7);
+                    tooltip.transition().duration(200).style("opacity", 0);
+                })
+                .on("click", function(event, d) {
+                    if (currentView === 'domain') drillToDomain(d.domain);
+                    else if (currentView === 'topic') drillToTopic(d.topic);
+                })
+                .merge(circles)
+                .transition()
+                .duration(500)
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 3);
+        }
+    </script>
+</body>
+</html>

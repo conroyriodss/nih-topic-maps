@@ -1,0 +1,22 @@
+{
+  "best_overall": {
+    "linkage_method": "ward",
+    "n_clusters_actual": 50,
+    "silhouette_score": -0.0007009715866622858,
+    "calinski_harabasz": 102.44774173060091,
+    "davies_bouldin": 3.975230135230398,
+    "composite_score": 0.6149582294194863
+  },
+  "best_silhouette": {
+    "n_clusters_actual": 75,
+    "silhouette_score": -0.000258514963033181
+  },
+  "best_calinski": {
+    "n_clusters_actual": 50,
+    "calinski_harabasz": 102.44774173060091
+  },
+  "best_davies_bouldin": {
+    "n_clusters_actual": 150,
+    "davies_bouldin": 3.7556199569684336
+  }
+}
