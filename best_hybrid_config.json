@@ -1,0 +1,18 @@
+{
+  "sample_size": 20000,
+  "k": 75,
+  "weights": {
+    "embedding": 0.9,
+    "rcdc": 0.0,
+    "ic": 0.1
+  },
+  "metrics": {
+    "silhouette_combined": 0.008604073642232896,
+    "silhouette_semantic": 0.01581564697935827,
+    "calinski_harabasz": 60.181275573818446,
+    "davies_bouldin": 4.524697216126329,
+    "ic_homogeneity": 0.0,
+    "composite_score": 0.2791675143752446
+  },
+  "interpretation": "Semantic-dominant"
+}

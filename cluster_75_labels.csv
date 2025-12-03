@@ -1,0 +1,76 @@
+cluster_id,label,keywords,lead_ic,n_grants,funding_millions
+0,Cell & Disease & Dna,"cell, disease, dna, immune, immunity",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,4181,1713.659951
+1,Asthma & Children & Chronic,"asthma, children, chronic, disease, exposure",NATIONAL INSTITUTE OF ENVIRONMENTAL HEALTH SCIENCES,4800,2172.43134
+2,Cancer & Clinical & Ebv,"cancer, clinical, ebv, grant, listeria",NATIONAL CANCER INSTITUTE,1251,629.053197
+3,Calcium & Channel & Channels,"calcium, channel, channels, function, mitochondrial","NATIONAL HEART, LUNG, AND BLOOD INSTITUTE",4981,1668.196381
+4,Aids & Care & Health,"aids, care, health, hiv, hiv aids",NATIONAL INSTITUTE OF MENTAL HEALTH,4328,3243.926292
+5,Anti & Cancer & Cell,"anti, cancer, cell, cells, lung",NATIONAL CANCER INSTITUTE,4647,1909.598447
+6,Bulb & Center & Disease,"bulb, center, disease, health, olfactory",NATIONAL INSTITUTE ON DEAFNESS AND OTHER COMMUNICATION DISORDERS,1167,1343.642736
+7,Cessation & Nicotine & Program,"cessation, nicotine, program, research, smokers",NATIONAL INSTITUTE ON DRUG ABUSE,2402,1315.636389
+8,Cell & Cells & Hcv,"cell, cells, hcv, hepatitis, hiv",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,6105,3415.5236
+9,Biomedical & Clinical & Health,"biomedical, clinical, health, program, research",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,4635,2332.218609
+10,Cell & Fungal & Host,"cell, fungal, host, infection, molecular",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,3607,2473.590734
+11,Dopamine & Function & Glutamate,"dopamine, function, glutamate, induced, mechanisms",NATIONAL INSTITUTE OF NEUROLOGICAL DISORDERS AND STROKE,3582,1242.05274
+12,Aging & Alzheimer & Alzheimer Disease,"aging, alzheimer, alzheimer disease, brain, development",NATIONAL INSTITUTE ON AGING,6067,3035.21275
+13,Center & Food & Grant,"center, food, grant, molecular, network",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,1748,1103.745881
+14,Bone & Cell & Development,"bone, cell, development, mechanisms, regeneration",NATIONAL INSTITUTE OF ARTHRITIS AND MUSCULOSKELETAL AND SKIN DISEASES,5849,1949.869872
+15,Based & Cancer & Detection,"based, cancer, detection, development, high",NATIONAL CANCER INSTITUTE,4807,2138.413667
+16,Center & Core & Cytomegalovirus,"center, core, cytomegalovirus, human, models",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,1699,1070.172303
+17,Control & Function & Insulin,"control, function, insulin, mechanisms, metabolism",NATIONAL INSTITUTE OF DIABETES AND DIGESTIVE AND KIDNEY DISEASES,5151,1940.577713
+18,Cell & Disease & Function,"cell, disease, function, mechanisms, multiple",NATIONAL INSTITUTE OF NEUROLOGICAL DISORDERS AND STROKE,2255,841.980917
+19,Alcohol & Biology & Cellular,"alcohol, biology, cellular, molecular, program",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,1378,712.052601
+20,Auditory & Cochlear & Cortex,"auditory, cochlear, cortex, development, hearing",NATIONAL INSTITUTE ON DEAFNESS AND OTHER COMMUNICATION DISORDERS,6123,2015.512783
+21,Abuse & Alcohol & Alcoholism,"abuse, alcohol, alcoholism, ethanol, induced",NATIONAL INSTITUTE ON ALCOHOL ABUSE AND ALCOHOLISM,4132,1442.538275
+22,Cell & Corneal & Development,"cell, corneal, development, glaucoma, mechanisms",NATIONAL EYE INSTITUTE,4796,1879.250624
+23,Fellowship & Health & Health Services,"fellowship, health, health services, minority, minority predoctoral",NATIONAL CENTER FOR CHRONIC DISEASE PREVENTION AND HEALTH PROMOTION,539,304.237151
+24,Cd & Cell & Cells,"cd, cell, cells, function, leukemia",NATIONAL CANCER INSTITUTE,6873,2832.818831
+25,Bioterrorism & Center & Health,"bioterrorism, center, health, health preparedness, preparedness",COORDINATING OFFICE FOR TERRORISM PREPAREDNESS AND EMERGENCY RESPONSE,337,1195.02475
+26,Analysis & Cancer & Data,"analysis, cancer, data, disease, genomic",NATIONAL HUMAN GENOME RESEARCH INSTITUTE,3527,2444.981255
+27,Asthma & Cell & Development,"asthma, cell, development, disease, imaging","NATIONAL HEART, LUNG, AND BLOOD INSTITUTE",4255,1796.215694
+28,Breast & Breast Cancer & Cancer,"breast, breast cancer, cancer, ovarian, ovarian cancer",NATIONAL CANCER INSTITUTE,5025,1865.241158
+29,Function & Mechanisms & Mrna,"function, mechanisms, mrna, protein, regulation",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,4504,1443.229649
+30,Apobec & Award & Center,"apobec, award, center, clinical, disease",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,358,292.174936
+31,Adults & Diabetes & Health,"adults, diabetes, health, intervention, obesity","NATIONAL HEART, LUNG, AND BLOOD INSTITUTE",4995,2384.618981
+32,Aids & Anthrax & Cancer,"aids, anthrax, cancer, center, hiv",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,2038,1675.127859
+33,Cell & Dna & Function,"cell, dna, function, gene, mechanisms",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,6711,2333.021301
+34,Cancer & Cancer Center & Center,"cancer, cancer center, center, center support, grant",NATIONAL CANCER INSTITUTE,896,1482.80962
+35,Cell & Cell Disease & Chlamydia,"cell, cell disease, chlamydia, disease, gene","NATIONAL HEART, LUNG, AND BLOOD INSTITUTE",1691,957.306713
+36,Brain & Control & Disease,"brain, control, disease, epilepsy, function",NATIONAL INSTITUTE OF NEUROLOGICAL DISORDERS AND STROKE,6030,2605.896944
+37,Agreements & Children & Cooperative,"agreements, children, cooperative, cooperative agreements, hpp phep",COORDINATING OFFICE FOR TERRORISM PREPAREDNESS AND EMERGENCY RESPONSE,391,950.936863
+38,Airway & Cell & Fibrosis,"airway, cell, fibrosis, injury, lung","NATIONAL HEART, LUNG, AND BLOOD INSTITUTE",4141,1689.267839
+39,Breast & Breast Cancer & Cancer,"breast, breast cancer, cancer, care, health",NATIONAL CANCER INSTITUTE,3698,1752.875796
+40,Als & Center & Cystic,"als, center, cystic, cystic fibrosis, disease",NATIONAL INSTITUTE OF NEUROLOGICAL DISORDERS AND STROKE,3136,1643.424078
+41,Career Development & Development & Institutional,"career development, development, institutional, medical, medical scientist",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,456,282.124442
+42,Beta & Cell & Diabetes,"beta, cell, diabetes, disease, kidney",NATIONAL INSTITUTE OF DIABETES AND DIGESTIVE AND KIDNEY DISEASES,4939,2055.088121
+43,Disease & Environmental & Health,"disease, environmental, health, lupus, lyme",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,1644,596.68313
+44,Antibiotic & Bacteria & Bacterial,"antibiotic, bacteria, bacterial, coli, dna",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,3408,1223.481757
+45,Brain & Brain Injury & Cerebral,"brain, brain injury, cerebral, disease, injury",NATIONAL INSTITUTE OF NEUROLOGICAL DISORDERS AND STROKE,4353,1666.483828
+46,Analysis & Breast & Cancer,"analysis, breast, cancer, development, high",NATIONAL CANCER INSTITUTE,2954,1534.819485
+47,Aging & Cognitive & Depression,"aging, cognitive, depression, development, effects",NATIONAL INSTITUTE OF MENTAL HEALTH,4031,1683.967303
+48,Capacity & Center & Clinical,"capacity, center, clinical, diseases, epidemiology",NATIONAL INSTITUTE OF DIABETES AND DIGESTIVE AND KIDNEY DISEASES,735,463.645912
+49,Alcohol & Based & Care,"alcohol, based, care, children, depression",NATIONAL INSTITUTE OF MENTAL HEALTH,6425,2420.914594
+50,Clinical & Dengue & Infection,"clinical, dengue, infection, malaria, plasmodium",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,2729,1651.23136
+51,Cancer & Center & Clinical,"cancer, center, clinical, health, network",NATIONAL CENTER FOR CHRONIC DISEASE PREVENTION AND HEALTH PROMOTION,4611,4876.677284
+52,Hiv & Hiv Prevention & Human Immunodeficiency,"hiv, hiv prevention, human immunodeficiency, immunodeficiency, immunodeficiency virus","NATIONAL CENTER FOR HIV, VIRAL HEPATITIS, STD AND TB PREVENTION",397,461.228122
+53,Analysis & Based & Cell,"analysis, based, cell, cells, development",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,4854,1905.921054
+54,Androgen & Bladder & Bladder Cancer,"androgen, bladder, bladder cancer, cancer, progression",NATIONAL CANCER INSTITUTE,2280,959.829321
+55,Cell & Function & Mechanisms,"cell, function, mechanisms, membrane, molecular",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,4562,1618.087071
+56,Cd & Cell & Cells,"cd, cell, cells, human, immunity",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,3666,1923.796656
+57,Aeruginosa & Aureus & Bacterial,"aeruginosa, aureus, bacterial, host, infection",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,2894,1026.200092
+58,Circadian & Depression & Effects,"circadian, depression, effects, mechanisms, opioid",NATIONAL INSTITUTE OF MENTAL HEALTH,3248,1179.365865
+59,Biology & Cancer & Center,"biology, cancer, center, clinical, food",NATIONAL CANCER INSTITUTE,2641,1451.026948
+60,Cancer & Cell & Cells,"cancer, cell, cells, glioblastoma, melanoma",NATIONAL CANCER INSTITUTE,4213,1582.097773
+61,Aids & Center & Clinical,"aids, center, clinical, clinical trials, hiv",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,2077,3033.056934
+62,Cell & Center & Disease,"cell, center, disease, mycobacterium, mycobacterium tuberculosis",NATIONAL INSTITUTE OF ALLERGY AND INFECTIOUS DISEASES,1910,1058.518323
+63,Cancer & Center & Clinical,"cancer, center, clinical, health, otolaryngology",NATIONAL CANCER INSTITUTE,510,582.569002
+64,Abuse & Addiction & Cocaine,"abuse, addiction, cocaine, drug, effects",NATIONAL INSTITUTE ON DRUG ABUSE,4011,1704.240624
+65,Assessment & Assessment Monitoring & Difficile,"assessment, assessment monitoring, difficile, monitoring, prams",NATIONAL CENTER FOR CHRONIC DISEASE PREVENTION AND HEALTH PROMOTION,975,587.084059
+66,Cancer & Center & Cervical,"cancer, center, cervical, core, hpv",NATIONAL CANCER INSTITUTE,1973,1863.633204
+67,Cancer & Center & Clinical,"cancer, center, clinical, igf, igf ot",NATIONAL CANCER INSTITUTE,2677,3947.815857
+68,Adults & Care & Disparities,"adults, care, disparities, health, impact",NATIONAL INSTITUTE ON AGING,4582,2274.162799
+69,Annual & Center & Clinical,"annual, center, clinical, conference, data","NATIONAL HEART, LUNG, AND BLOOD INSTITUTE",3066,3297.69552
+70,Function & Mechanisms & Molecular,"function, mechanisms, molecular, protein, proteins",NATIONAL INSTITUTE OF GENERAL MEDICAL SCIENCES,3399,1182.482003
+71,Clinical & Fellowship & Fellowship Program,"clinical, fellowship, fellowship program, minority, network",EUNICE KENNEDY SHRIVER NATIONAL INSTITUTE OF CHILD HEALTH & HUMAN DEVELOPMENT,939,778.665871
+72,Atherosclerosis & Cardiac & Disease,"atherosclerosis, cardiac, disease, function, heart","NATIONAL HEART, LUNG, AND BLOOD INSTITUTE",6386,2552.314825
+73,Autism & Cell & Development,"autism, cell, development, drosophila, elegans",NATIONAL INSTITUTE OF MENTAL HEALTH,3217,1204.959095
+74,Cancer & Comprehensive & Core,"cancer, comprehensive, core, nrsa, nrsa training",NATIONAL CANCER INSTITUTE,402,367.220341
