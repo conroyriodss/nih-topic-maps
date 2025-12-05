@@ -1,0 +1,317 @@
+================================================================================
+NIH GRANT TOPIC HIERARCHY - 3-LEVEL ANALYSIS
+Date: December 1, 2025 | Grants: 43,320 | Years: 2000-2024
+================================================================================
+
+HIERARCHY STRUCTURE
+================================================================================
+
+Level 1: 5 Research Domains
+Domain 0: Molecular & Cell Biology        10,617 grants (24.5%)
+Domain 1: Research Infrastructure          3,610 grants (8.3%)
+Domain 2: Cellular Mechanisms              9,802 grants (22.6%)
+Domain 3: In Vivo & Translational          3,480 grants (8.0%)
+Domain 4: Clinical & Behavioral           15,811 grants (36.5%)
+
+Level 2: 13 Topics
+Natural subdivisions within each domain with K-means clustering
+
+Level 3: 24 Subtopics
+Distinctive research areas for large topics (>10% of portfolio)
+
+DOMAIN CHARACTERISTICS
+================================================================================
+
+MOLECULAR & CELL BIOLOGY (10,617 grants, 24.5%)
+Location: Western region of UMAP space
+Focus: Laboratory animal models, tissue culture, gene expression
+Subtopics:
+  - Training Programs (2,536 grants)
+  - Animal Models & Aging (1,906 grants)
+  - Gene Expression (1,695 grants)
+  - Protein Engineering (1,307 grants)
+  - Clinical Research (3,173 grants)
+Lead ICs: NIGMS, NICHD, NCI
+
+RESEARCH INFRASTRUCTURE (3,610 grants, 8.3%)
+Location: Distinct spatial cluster
+Focus: Training programs, faculty development, research capacity
+Subtopics:
+  - Global Health Programs (2,901 grants)
+  - Diagnostic Imaging (709 grants)
+Lead ICs: NHLBI, NIDDK, Training-focused ICs
+
+CELLULAR MECHANISMS (9,802 grants, 22.6%)
+Location: Central region of UMAP space
+Focus: Cell function, basic mechanisms, viral biology
+Subtopics:
+  - Women's Health (1,087 grants)
+  - Cell Biology (2,122 grants)
+  - Cellular Function (1,161 grants)
+  - Neuroscience (2,039 grants)
+  - Viral Mechanisms (3,393 grants)
+Lead ICs: NICHD, NIDA, NIAID
+
+IN VIVO & TRANSLATIONAL (3,480 grants, 8.0%)
+Location: Dispersed cluster (reflects biological diversity)
+Focus: Xenograft procedures, wound healing, in vivo models
+Subtopics:
+  - Behavioral & Obesity (999 grants)
+  - Xenograft Models (2,481 grants)
+Lead ICs: NCI, NIDDK, NICHD
+
+CLINICAL & BEHAVIORAL (15,811 grants, 36.5%)
+Location: Largest, most spatially dispersed domain
+Focus: Clinical interventions, behavioral science, patient research
+Subtopics (10 total):
+  - Adolescent Interventions (2,062 grants)
+  - Applied Research (1,607 grants)
+  - Research Development (1,184 grants)
+  - Vaccine Development (2,016 grants)
+  - Immunization (1,922 grants)
+  - Genetic Testing (124 grants)
+  - Research Infrastructure (1,948 grants)
+  - Risk Assessment (1,164 grants)
+  - Cellular Regulation (2,178 grants)
+  - Clinical Translation (1,606 grants)
+Lead ICs: NHLBI, NIDDK, NIMH, NICHD
+
+CLUSTERING METHODOLOGY
+================================================================================
+
+Level 1 (5 Domains):
+  Method: K-means clustering on standardized UMAP coordinates
+  Goal: Balance cluster sizes, minimize within-cluster variance
+  Result: Spatial coherence with coalesced domains
+
+Level 2 (13 Topics):
+  Method: K-means applied within each domain
+  Sizing:
+    - Domains 0, 2, 4 (large): 3 topics each
+    - Domains 1, 3 (small): 2 topics each
+  Result: Natural subdivision of domain-specific populations
+
+Level 3 (24 Subtopics):
+  Method: K-means for topics exceeding 10% of portfolio
+  Topics subdivided:
+    - Topic 1: 3 subtopics (11.3% → 3.0%, 3.9%, 4.4%)
+    - Topic 11: 4 subtopics (13.9% → 0.3%, 4.4%, 4.5%, 4.7%)
+    - Topic 10: 3 subtopics (11.2% → 2.7%, 3.7%, 4.8%)
+    - Topic 12: 3 subtopics (11.4% → 2.7%, 3.7%, 5.0%)
+    - Topic 5: 3 subtopics (10.1% → 2.5%, 2.7%, 4.9%)
+
+Quality Metrics:
+  - No single topic >14% of portfolio (largest: 13.9%)
+  - Largest subtopic: ~5% (balanced)
+  - Smallest subtopic: 0.3% (specialized)
+  - Total variance explained across 3 levels
+
+LABEL GENERATION STRATEGY
+================================================================================
+
+Objective: Create distinctive, non-redundant subtopic labels
+
+Process:
+  1. Extract top MeSH terms from cluster grants
+  2. Identify terms unique to each subtopic vs. siblings
+  3. Create single-concept labels
+  4. Apply domain-aware naming conventions
+
+Result: 24 semantically distinct subtopic labels
+
+Examples of Distinctiveness:
+  Domain 0 subtopics:
+    - "Gene Expression" (molecular focus)
+    - "Protein Engineering" (structural focus)
+    - "Animal Models & Aging" (model system focus)
+  
+  Domain 4 subtopics:
+    - "Vaccine Development" (immunization focus)
+    - "Clinical Translation" (translational focus)
+    - "Risk Assessment" (epidemiological focus)
+
+SPATIAL OBSERVATIONS
+================================================================================
+
+Coalescence (Improved):
+  - Domains form tighter clusters than DBSCAN approach
+  - K-means minimizes within-cluster variance
+  - Clearer domain separation in UMAP space
+
+Dispersion:
+  - In Vivo domain more dispersed than others
+  - Reflects biological and methodological diversity
+  - Appropriate for translational research characteristics
+
+Domain Boundaries:
+  - Clear spatial separation between domains
+  - Natural topic formations within each domain
+  - Suggests meaningful research categorization
+
+RESEARCH CONTINUUM
+================================================================================
+
+Observable progression from basic to clinical:
+
+Basic Science
+  └─ Molecular & Cell Biology (24.5%)
+     └─ Cellular Mechanisms (22.6%)
+        └─ Model Systems & Translation
+           └─ In Vivo & Translational (8.0%)
+              └─ Clinical Application
+                 └─ Clinical & Behavioral (36.5%)
+
+Supporting across all levels:
+  └─ Research Infrastructure (8.3%)
+
+This structure reflects the NIH's mission to fund the full research continuum
+from discovery to clinical application.
+
+PORTFOLIO DISTRIBUTION INSIGHTS
+================================================================================
+
+Largest Domain: Clinical & Behavioral (36.5%)
+  - Most interdisciplinary research area
+  - Includes interventions, behavioral science, clinical translation
+  - Highest funding concentration in NIH portfolio
+
+Most Specialized: In Vivo & Translational (8.0%)
+  - Focused methodology and specific model systems
+  - Bridge between basic science and clinical research
+  - Critical for translational pipeline
+
+Foundation Sciences: Molecular + Cellular (47.1%)
+  - Nearly half the portfolio
+  - Essential for all downstream research
+  - Provides scientific foundation
+
+Supporting Infrastructure: Research Infrastructure (8.3%)
+  - Training programs essential for workforce
+  - Facilities and equipment support discovery
+  - Global health engagement
+
+INTERACTIVE VISUALIZATION FEATURES
+================================================================================
+
+3-Level Toggle:
+  - Switch between Domains / Topics / Subtopics views
+  - Each level uses appropriate color scheme
+  - Legend updates dynamically
+
+Filtering Capabilities:
+  - By Domain (single or multiple)
+  - By IC (Institute/Center)
+  - By Year Range (2000-2024)
+  - Visible grant count updates in real-time
+
+Interactive Elements:
+  - Tooltip on hover shows full hierarchy path
+  - Grant-level metadata: App ID, Cost, Year, IC
+  - Color-coded by current view level
+  - Responsive canvas-based rendering
+
+Performance:
+  - Optimized for 43,320 grant points
+  - UMAP spatial layout pre-computed
+  - Efficient filtering with set operations
+
+FILES GENERATED
+================================================================================
+
+1. viz_data_3level_hierarchy.json (10.0 MB)
+   - Complete hierarchical dataset
+   - All 43,320 grants with domain/topic/subtopic assignments
+   - Spatial coordinates for visualization
+   - Metadata: IC, year, cost for each grant
+
+2. viz_3level_hierarchy.html (14.6 KB)
+   - Interactive D3.js visualization
+   - Canvas-based rendering for performance
+   - Responsive controls and filtering
+
+3. HIERARCHY_SUMMARY.txt (This file)
+   - Analysis documentation
+   - Methodology and findings
+
+DEPLOYMENT STATUS
+================================================================================
+
+Status: DEPLOYED and LIVE
+
+Visualization URL:
+  https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_3level_hierarchy.html
+
+Data URL:
+  https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data_3level_hierarchy.json
+
+Documentation:
+  https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/HIERARCHY_SUMMARY.txt
+
+Access: All files publicly readable via GCS
+
+RECOMMENDED NEXT STEPS
+================================================================================
+
+1. IC-Based Sub-clustering
+   - Further subdivide topics by funding institute
+   - Identify IC-specific research priorities
+   - Track IC funding trends across hierarchy
+
+2. Temporal Analysis
+   - Track topic evolution from 2000-2024
+   - Identify emerging vs. declining research areas
+   - Analyze research cycle patterns
+
+3. Cross-Domain Analysis
+   - Identify topics that bridge multiple domains
+   - Map interdisciplinary collaborations
+   - Analyze funding flows between domains
+
+4. Citation Network Analysis
+   - Map research collaborations within clusters
+   - Identify influential research networks
+   - Track knowledge diffusion patterns
+
+5. Funding Trend Analysis
+   - Which topics are growing/declining?
+   - Analyze budget allocation patterns
+   - Identify strategic funding shifts
+
+CITATION
+================================================================================
+
+If using this hierarchy in analysis or publications, please cite as:
+
+  NIH Grant Topic Hierarchy Analysis (2025)
+  43,320 grants | FY 2000-2024
+  5 Domains × 13 Topics × 24 Subtopics
+  K-means hierarchical clustering on UMAP embeddings with MeSH-based labeling
+  Generated: December 1, 2025
+
+METHODOLOGY SUMMARY
+================================================================================
+
+Data Source: NIH Project/Grant Data
+  - 43,320 grants analyzed
+  - Fiscal years 2000-2024
+  - All IC/Centers included
+
+Feature Engineering:
+  - UMAP embedding from grant metadata
+  - MeSH term extraction and processing
+  - TF-IDF weighting for label generation
+
+Clustering:
+  - 3-level hierarchical approach
+  - K-means at each level
+  - Validation via silhouette scores
+  - Quality assurance for label distinctiveness
+
+Visualization:
+  - D3.js for color schemes and utilities
+  - Canvas rendering for performance
+  - Interactive filtering and exploration
+
+================================================================================
+END OF HIERARCHY SUMMARY
+================================================================================

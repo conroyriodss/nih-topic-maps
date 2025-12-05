@@ -1,0 +1,265 @@
+{
+  "creationTime": "1764021448930",
+  "etag": "l8Txzv2Q3DYmJVMBHtw00A==",
+  "id": "od-cl-odss-conroyri-f75a:nih_exporter.projects",
+  "kind": "bigquery#table",
+  "lastModifiedTime": "1764079961800",
+  "location": "US",
+  "numActiveLogicalBytes": "3674718772",
+  "numActivePhysicalBytes": "1003293096",
+  "numBytes": "3674718772",
+  "numCurrentPhysicalBytes": "904832632",
+  "numLongTermBytes": "0",
+  "numLongTermLogicalBytes": "0",
+  "numLongTermPhysicalBytes": "0",
+  "numRows": "2639331",
+  "numTimeTravelPhysicalBytes": "98460464",
+  "numTotalLogicalBytes": "3674718772",
+  "numTotalPhysicalBytes": "1003293096",
+  "schema": {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "APPLICATION_ID",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ACTIVITY",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ADMINISTERING_IC",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "APPLICATION_TYPE",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ARRA_FUNDED",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "AWARD_NOTICE_DATE",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "BUDGET_START",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "BUDGET_END",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "CFDA_CODE",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "CORE_PROJECT_NUM",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "DIRECT_COST_AMT",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ED_INST_TYPE",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "FOA_NUMBER",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "FULL_PROJECT_NUM",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "FUNDING_ICs",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "FUNDING_MECHANISM",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "FY",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "IC_NAME",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "INDIRECT_COST_AMT",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "NIH_SPENDING_CATS",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_CITY",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_COUNTRY",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_DEPT",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_DISTRICT",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_DUNS",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_FIPS",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_IPF_CODE",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_NAME",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_STATE",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ORG_ZIPCODE",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PHR",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PI_IDS",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PI_NAMEs",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PROGRAM_OFFICER_NAME",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PROJECT_START",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PROJECT_END",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PROJECT_TERMS",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PROJECT_TITLE",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "SERIAL_NUMBER",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "STUDY_SECTION",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "STUDY_SECTION_NAME",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "SUBPROJECT_ID",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "SUFFIX",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "SUPPORT_YEAR",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "TOTAL_COST",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "TOTAL_COST_SUB_PROJECT",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "YEAR",
+        "type": "FLOAT"
+      }
+    ]
+  },
+  "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/od-cl-odss-conroyri-f75a/datasets/nih_exporter/tables/projects",
+  "tableReference": {
+    "datasetId": "nih_exporter",
+    "projectId": "od-cl-odss-conroyri-f75a",
+    "tableId": "projects"
+  },
+  "type": "TABLE"
+}

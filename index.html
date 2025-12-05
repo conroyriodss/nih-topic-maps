@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIH Topic Hierarchy - Interactive Visualization</title>
+<style>
+body { font-family: sans-serif; margin: 0; padding: 20px; background: #f5f7fa; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { color: #667eea; }
+.info { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.info p { margin: 10px 0; line-height: 1.6; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+.stat-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.stat-card h3 { margin: 0 0 10px 0; color: #667eea; }
+.stat-card p { margin: 0; font-size: 24px; font-weight: bold; color: #764ba2; }
+a { color: #667eea; text-decoration: none; font-weight: bold; }
+a:hover { text-decoration: underline; }
+button { background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; text-decoration: none; display: inline-block; }
+button:hover { background: #5568d3; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🧬 NIH Grant Topic Hierarchy - Interactive Visualization</h1>
+
+<div class="info">
+<h2>3-Level Hierarchical Analysis of 43,320 NIH Grants (FY 2000-2024)</h2>
+<p>This interactive visualization maps the entire NIH grant portfolio across three hierarchical levels:</p>
+<ul>
+<li><strong>5 Domains:</strong> Strategic research areas with improved spatial coalescence</li>
+<li><strong>13 Topics:</strong> Natural subdivisions within each domain</li>
+<li><strong>24 Subtopics:</strong> Distinctive research focus areas</li>
+</ul>
+</div>
+
+<div class="stats">
+<div class="stat-card">
+<h3>Total Grants</h3>
+<p>43,320</p>
+</div>
+<div class="stat-card">
+<h3>Time Period</h3>
+<p>2000-2024</p>
+</div>
+<div class="stat-card">
+<h3>Domains</h3>
+<p>5</p>
+</div>
+<div class="stat-card">
+<h3>Topics</h3>
+<p>13</p>
+</div>
+<div class="stat-card">
+<h3>Subtopics</h3>
+<p>24</p>
+</div>
+</div>
+
+<div class="info">
+<h2>Interactive Features</h2>
+<ul>
+<li>✓ Toggle between Domains, Topics, and Subtopics views</li>
+<li>✓ Filter by domain, IC/Center, and year range</li>
+<li>✓ Hover over points for grant details (IC, year, cost, research area)</li>
+<li>✓ Real-time visible grant count</li>
+<li>✓ UMAP spatial layout showing research similarity</li>
+</ul>
+</div>
+
+<button onclick="window.location.href='viz_3level_hierarchy.html'">Open Interactive Visualization →</button>
+
+<div class="info" style="margin-top: 30px;">
+<h2>Documentation</h2>
+<p><a href="HIERARCHY_SUMMARY.txt">📄 Read the full analysis report</a></p>
+<p><a href="viz_data_3level_hierarchy.json">📊 Download the hierarchical data (JSON)</a></p>
+</div>
+
+<div class="info" style="margin-top: 30px; background: #f0f0f0; border-left: 4px solid #667eea;">
+<h3>Project Summary</h3>
+<p><strong>Objective:</strong> Create a multi-level hierarchical clustering of 43,320 NIH grants with improved spatial coalescence and distinctive subtopic labeling.</p>
+<p><strong>Method:</strong> 3-level K-means hierarchical clustering on UMAP embeddings with MeSH-based semantic labeling.</p>
+<p><strong>Result:</strong> 5 domains → 13 topics → 24 distinctive subtopics with balanced portfolio distribution.</p>
+<p><strong>Date:</strong> December 1, 2025</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIH Topic Maps - PROJECT_TERMS Interactive</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+        
+        .controls {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 12px;
+            color: #333;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .checkbox-item input {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item label {
+            margin: 0;
+            text-transform: none;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #666;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .viz-container {
+            flex: 1;
+            position: relative;
+            background: white;
+        }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .point {
+            cursor: pointer;
+            stroke: white;
+            stroke-width: 0.5px;
+            transition: all 0.1s;
+        }
+        
+        .point:hover {
+            stroke-width: 2px;
+            filter: brightness(1.2);
+        }
+        
+        .point.faded {
+            opacity: 0.1 !important;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 50;
+            max-width: 350px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            display: none;
+        }
+        
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #667eea;
+        }
+        
+        .tooltip-item {
+            margin: 4px 0;
+        }
+        
+        .tooltip-label {
+            color: #aaa;
+            display: inline-block;
+            width: 60px;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 11px;
+            max-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧬 NIH Topic Maps - PROJECT_TERMS Interactive</h1>
+        <p>43,320 grants | 100 topics | Explore by IC, year, or topic</p>
+    </div>
+    
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label>Color By</label>
+                <select id="colorBy">
+                    <option value="cluster">Topic (Cluster)</option>
+                    <option value="ic">NIH IC</option>
+                    <option value="year">Fiscal Year</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Filter Topics</label>
+                <select id="topicFilter" multiple size="8">
+                    <option value="">All Topics</option>
+                </select>
+                <small style="color: #999;">Hold Ctrl/Cmd to select multiple</small>
+            </div>
+            
+            <div class="control-group">
+                <label>Filter ICs</label>
+                <select id="icFilter" multiple size="6">
+                    <option value="">All ICs</option>
+                </select>
+                <small style="color: #999;">Hold Ctrl/Cmd to select multiple</small>
+            </div>
+            
+            <div class="control-group">
+                <label>Year Range</label>
+                <input type="number" id="yearMin" min="2000" max="2024" value="2000" placeholder="Min year">
+                <input type="number" id="yearMax" min="2000" max="2024" value="2024" placeholder="Max year">
+            </div>
+            
+            <div class="control-group">
+                <button onclick="resetFilters()" style="width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Reset Filters</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Visible Grants:</span>
+                    <span class="stat-value" id="visibleCount">43,320</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Grants:</span>
+                    <span class="stat-value">43,320</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Topics:</span>
+                    <span class="stat-value">100</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">ICs:</span>
+                    <span class="stat-value" id="icCount">27</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="viz-container">
+            <svg id="viz"></svg>
+            <div id="legend" class="legend"></div>
+            <div class="tooltip" id="tooltip"></div>
+        </div>
+    </div>
+    
+    <script>
+        let vizData = null;
+        let allPoints = [];
+        let svg = null;
+        let points = null;
+        let currentFilters = {
+            topics: [],
+            ics: [],
+            yearMin: 2000,
+            yearMax: 2024,
+            colorBy: 'cluster'
+        };
+        
+        // Load data
+        fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data_new_umap.json')
+            .then(r => r.json())
+            .then(data => {
+                vizData = data;
+                allPoints = data.points.slice();
+                initializeVisualization();
+                populateFilters();
+                updateVisualization();
+            })
+            .catch(err => console.error('Error loading data:', err));
+        
+        function initializeVisualization() {
+            const margin = {top: 0, right: 0, bottom: 0, left: 0};
+            const width = document.querySelector('.viz-container').clientWidth;
+            const height = document.querySelector('.viz-container').clientHeight;
+            
+            const xExtent = d3.extent(vizData.points, d => d.x);
+            const yExtent = d3.extent(vizData.points, d => d.y);
+            
+            const xScale = d3.scaleLinear().domain(xExtent).range([0, width]);
+            const yScale = d3.scaleLinear().domain(yExtent).range([height, 0]);
+            
+            window.xScale = xScale;
+            window.yScale = yScale;
+            
+            svg = d3.select('#viz').attr('width', width).attr('height', height);
+            
+            points = svg.selectAll('.point').data(vizData.points, (d, i) => i);
+        }
+        
+        function updateVisualization() {
+            const margin = {top: 0, right: 0, bottom: 0, left: 0};
+            const width = document.querySelector('.viz-container').clientWidth;
+            const height = document.querySelector('.viz-container').clientHeight;
+            
+            // Apply filters
+            let filtered = vizData.points.filter(d => {
+                let keep = true;
+                if (currentFilters.topics.length > 0) {
+                    keep = keep && currentFilters.topics.includes(d.cluster);
+                }
+                if (currentFilters.ics.length > 0) {
+                    keep = keep && currentFilters.ics.includes(d.ic);
+                }
+                keep = keep && d.year >= currentFilters.yearMin && d.year <= currentFilters.yearMax;
+                return keep;
+            });
+            
+            // Update visible count
+            document.getElementById('visibleCount').textContent = filtered.length.toLocaleString();
+            
+            // Get color scale based on current selection
+            let colorScale;
+            if (currentFilters.colorBy === 'cluster') {
+                colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(100));
+            } else if (currentFilters.colorBy === 'ic') {
+                const ics = [...new Set(vizData.points.map(d => d.ic))].sort();
+                colorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(ics);
+            } else if (currentFilters.colorBy === 'year') {
+                colorScale = d3.scaleLinear().domain([2000, 2024]).range(['#fee5d9', '#a1d99b']);
+            }
+            
+            // Update legend
+            updateLegend(colorScale);
+            
+            // Redraw points
+            svg.selectAll('.point').remove();
+            svg.selectAll('.point')
+                .data(vizData.points)
+                .enter()
+                .append('circle')
+                .attr('class', d => {
+                    const isFiltered = filtered.some(f => f.application_id === d.application_id);
+                    return 'point' + (isFiltered ? '' : ' faded');
+                })
+                .attr('cx', d => window.xScale(d.x))
+                .attr('cy', d => window.yScale(d.y))
+                .attr('r', 3)
+                .attr('fill', d => {
+                    if (currentFilters.colorBy === 'cluster') {
+                        return colorScale(d.cluster);
+                    } else if (currentFilters.colorBy === 'ic') {
+                        return colorScale(d.ic);
+                    } else {
+                        return colorScale(d.year);
+                    }
+                })
+                .attr('opacity', d => {
+                    const isFiltered = filtered.some(f => f.application_id === d.application_id);
+                    return isFiltered ? 0.7 : 0.05;
+                })
+                .on('mouseover', function(event, d) {
+                    showTooltip(event, d);
+                })
+                .on('mouseout', hideTooltip);
+        }
+        
+        function populateFilters() {
+            // Populate topics
+            const topicSelect = document.getElementById('topicFilter');
+            vizData.clusters.forEach(cluster => {
+                const option = document.createElement('option');
+                option.value = cluster.id;
+                option.textContent = `${cluster.id}: ${cluster.label} (${cluster.size})`;
+                topicSelect.appendChild(option);
+            });
+            
+            // Populate ICs
+            const icSelect = document.getElementById('icFilter');
+            const ics = [...new Set(vizData.points.map(d => d.ic))].sort();
+            document.getElementById('icCount').textContent = ics.length;
+            ics.forEach(ic => {
+                const option = document.createElement('option');
+                option.value = ic;
+                option.textContent = ic;
+                icSelect.appendChild(option);
+            });
+            
+            // Add change listeners
+            document.getElementById('colorBy').addEventListener('change', (e) => {
+                currentFilters.colorBy = e.target.value;
+                updateVisualization();
+            });
+            
+            document.getElementById('topicFilter').addEventListener('change', (e) => {
+                currentFilters.topics = Array.from(e.target.selectedOptions).map(o => parseInt(o.value));
+                updateVisualization();
+            });
+            
+            document.getElementById('icFilter').addEventListener('change', (e) => {
+                currentFilters.ics = Array.from(e.target.selectedOptions).map(o => o.value);
+                updateVisualization();
+            });
+            
+            document.getElementById('yearMin').addEventListener('change', (e) => {
+                currentFilters.yearMin = parseInt(e.target.value);
+                updateVisualization();
+            });
+            
+            document.getElementById('yearMax').addEventListener('change', (e) => {
+                currentFilters.yearMax = parseInt(e.target.value);
+                updateVisualization();
+            });
+        }
+        
+        function resetFilters() {
+            currentFilters = {
+                topics: [],
+                ics: [],
+                yearMin: 2000,
+                yearMax: 2024,
+                colorBy: 'cluster'
+            };
+            document.getElementById('topicFilter').selectedIndex = 0;
+            document.getElementById('icFilter').selectedIndex = 0;
+            document.getElementById('colorBy').value = 'cluster';
+            document.getElementById('yearMin').value = 2000;
+            document.getElementById('yearMax').value = 2024;
+            updateVisualization();
+        }
+        
+        function showTooltip(event, d) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${d.title ? d.title.substring(0, 60) + '...' : 'Grant ' + d.application_id}</div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">ID:</span>
+                    <span>${d.application_id}</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">Topic:</span>
+                    <span>${d.cluster}</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">IC:</span>
+                    <span>${d.ic}</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">Year:</span>
+                    <span>${d.year}</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">Cost:</span>
+                    <span>${(d.cost / 1000000).toFixed(1)}M</span>
+                </div>
+            `;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (event.pageX + 10) + 'px';
+            tooltip.style.top = (event.pageY + 10) + 'px';
+        }
+        
+        function hideTooltip() {
+            document.getElementById('tooltip').style.display = 'none';
+        }
+        
+        function updateLegend(colorScale) {
+            const legend = document.getElementById('legend');
+            legend.innerHTML = '';
+            
+            const title = document.createElement('div');
+            title.className = 'legend-title';
+            title.textContent = 'Color By: ' + currentFilters.colorBy.toUpperCase();
+            legend.appendChild(title);
+            
+            if (currentFilters.colorBy === 'cluster') {
+                vizData.clusters.slice(0, 10).forEach(cluster => {
+                    const item = document.createElement('div');
+                    item.className = 'legend-item';
+                    const color = document.createElement('div');
+                    color.className = 'legend-color';
+                    color.style.backgroundColor = colorScale(cluster.id);
+                    item.appendChild(color);
+                    const label = document.createElement('span');
+                    label.textContent = cluster.label.substring(0, 30);
+                    item.appendChild(label);
+                    legend.appendChild(item);
+                });
+            } else if (currentFilters.colorBy === 'ic') {
+                const ics = [...new Set(vizData.points.map(d => d.ic))].sort().slice(0, 15);
+                ics.forEach(ic => {
+                    const item = document.createElement('div');
+                    item.className = 'legend-item';
+                    const color = document.createElement('div');
+                    color.className = 'legend-color';
+                    color.style.backgroundColor = colorScale(ic);
+                    item.appendChild(color);
+                    const label = document.createElement('span');
+                    label.textContent = ic;
+                    item.appendChild(label);
+                    legend.appendChild(item);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

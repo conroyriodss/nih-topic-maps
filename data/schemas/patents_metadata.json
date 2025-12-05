@@ -1,0 +1,50 @@
+{
+  "creationTime": "1764020773412",
+  "etag": "vNliAobZiG1eTs30ITjX9w==",
+  "id": "od-cl-odss-conroyri-f75a:nih_exporter.patents",
+  "kind": "bigquery#table",
+  "lastModifiedTime": "1764020985550",
+  "location": "US",
+  "numActiveLogicalBytes": "10032780",
+  "numActivePhysicalBytes": "3158807",
+  "numBytes": "10032780",
+  "numCurrentPhysicalBytes": "1579404",
+  "numLongTermBytes": "0",
+  "numLongTermLogicalBytes": "0",
+  "numLongTermPhysicalBytes": "0",
+  "numRows": "85043",
+  "numTimeTravelPhysicalBytes": "1579403",
+  "numTotalLogicalBytes": "10032780",
+  "numTotalPhysicalBytes": "3158807",
+  "schema": {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "PATENT_ID",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PATENT_TITLE",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PROJECT_ID",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PATENT_ORG_NAME",
+        "type": "STRING"
+      }
+    ]
+  },
+  "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/od-cl-odss-conroyri-f75a/datasets/nih_exporter/tables/patents",
+  "tableReference": {
+    "datasetId": "nih_exporter",
+    "projectId": "od-cl-odss-conroyri-f75a",
+    "tableId": "patents"
+  },
+  "type": "TABLE"
+}

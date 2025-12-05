@@ -1,0 +1,45 @@
+{
+  "creationTime": "1764021526698",
+  "etag": "F1BoQtgT5nM+ItPT+8xjww==",
+  "id": "od-cl-odss-conroyri-f75a:nih_exporter.abstracts",
+  "kind": "bigquery#table",
+  "lastModifiedTime": "1764079351574",
+  "location": "US",
+  "numActiveLogicalBytes": "5534861443",
+  "numActivePhysicalBytes": "3454584957",
+  "numBytes": "5534861443",
+  "numCurrentPhysicalBytes": "1841657248",
+  "numLongTermBytes": "0",
+  "numLongTermLogicalBytes": "0",
+  "numLongTermPhysicalBytes": "0",
+  "numRows": "2333122",
+  "numTimeTravelPhysicalBytes": "1612927709",
+  "numTotalLogicalBytes": "5534861443",
+  "numTotalPhysicalBytes": "3454584957",
+  "schema": {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "APPLICATION_ID",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ABSTRACT_TEXT",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "YEAR",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/od-cl-odss-conroyri-f75a/datasets/nih_exporter/tables/abstracts",
+  "tableReference": {
+    "datasetId": "nih_exporter",
+    "projectId": "od-cl-odss-conroyri-f75a",
+    "tableId": "abstracts"
+  },
+  "type": "TABLE"
+}

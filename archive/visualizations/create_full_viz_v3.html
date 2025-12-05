@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIH Topic Maps - Interactive Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            overflow: hidden;
+        }
+        
+        #controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 340px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid #e1e4e8;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        
+        #visualization {
+            position: fixed;
+            top: 0;
+            left: 340px;
+            right: 0;
+            height: 100vh;
+        }
+        
+        h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        select, input[type="range"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        .checkbox-group {
+            max-height: 180px;
+            overflow-y: auto;
+            border: 1px solid #e1e4e8;
+            border-radius: 5px;
+            padding: 10px;
+            background: #fafbfc;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+        
+        .checkbox-item input {
+            margin-right: 8px;
+        }
+        
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .toggle-btn {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        
+        .toggle-btn:hover {
+            background: #5568d3;
+        }
+        
+        .toggle-btn.active {
+            background: #48bb78;
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+        
+        .stats-label {
+            color: #666;
+        }
+        
+        .stats-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 2000;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .label-density {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .label-density input {
+            flex: 1;
+        }
+        
+        .label-count {
+            font-size: 11px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+        <div>Loading 50,000 grants...</div>
+    </div>
+
+    <div id="controls">
+        <h1>🧬 NIH Topic Maps</h1>
+        <div class="subtitle">50,000 Grants • 2000-2024 • 74 Topics</div>
+        
+        <div class="control-group">
+            <label class="control-label">Color By</label>
+            <select id="colorBy">
+                <option value="ic">Institute/Center (IC)</option>
+                <option value="year">Fiscal Year</option>
+                <option value="topic">Topic Cluster</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <button class="toggle-btn" id="toggleOverlay">Overlay Mode: OFF</button>
+            <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                Enable to highlight filtered grants on semi-transparent background
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Topic Labels</label>
+            <button class="toggle-btn" id="toggleLabels">Labels: OFF</button>
+            <div class="label-density" id="labelDensityControl" style="display: none;">
+                <input type="range" id="labelDensity" min="5" max="50" value="25" step="5">
+                <span class="label-count" id="labelCount">25 labels</span>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Year Range</label>
+            <input type="range" id="yearMin" min="2000" max="2024" value="2000" step="1">
+            <input type="range" id="yearMax" min="2000" max="2024" value="2024" step="1">
+            <div class="range-values">
+                <span id="yearMinVal">2000</span>
+                <span id="yearMaxVal">2024</span>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <button class="toggle-btn" id="toggleAll">Select All ICs</button>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Filter by IC</label>
+            <div class="checkbox-group" id="icCheckboxes"></div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Search</label>
+            <input type="text" class="search-box" id="searchBox" placeholder="Search by title or ID...">
+        </div>
+        
+        <div class="stats">
+            <div class="stats-item">
+                <span class="stats-label">Visible:</span>
+                <span class="stats-value" id="visibleCount">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Selected:</span>
+                <span class="stats-value" id="selectedCount">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Funding:</span>
+                <span class="stats-value" id="totalFunding">$0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="visualization"></div>
+
+    <script>
+        let allData = [];
+        let filteredData = [];
+        let showLabels = false;
+        let overlayMode = false;
+        let selectedICs = new Set();
+        let topicCentroids = {};
+        
+        // Expanded IC colors with better visibility
+        const icColors = {
+            'CA': '#e74c3c', 'GM': '#3498db', 'AI': '#2ecc71', 'HL': '#f39c12',
+            'DK': '#9b59b6', 'NS': '#1abc9c', 'MH': '#e67e22', 'AG': '#34495e',
+            'HD': '#16a085', 'DA': '#27ae60', 'EY': '#2980b9', 'AR': '#8e44ad',
+            'ES': '#c0392b', 'DC': '#d35400', 'AA': '#7f8c8d', 'NR': '#95a5a6',
+            'AT': '#e91e63', 'EB': '#00bcd4', 'DE': '#ffc107', 'TR': '#4caf50',
+            'MD': '#ff9800', 'LM': '#9c27b0', 'TW': '#795548', 'FIC': '#607d8b',
+            'RR': '#f44336', 'OD': '#3f51b5', 'CIT': '#009688'
+        };
+        
+        async function loadData() {
+            try {
+                document.getElementById('loading').innerHTML = '<div class="spinner"></div><div>Loading grant data...</div>';
+                
+                const response = await fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                allData = await response.json();
+                console.log(`✓ Loaded ${allData.length.toLocaleString()} grants`);
+                
+                // Calculate topic centroids for labels
+                calculateTopicCentroids();
+                
+                // Initialize
+                const ics = [...new Set(allData.map(d => d.ic))].sort();
+                ics.forEach(ic => selectedICs.add(ic));
+                
+                initializeControls();
+                filterAndPlot();
+                document.getElementById('loading').style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = 
+                    `<div style="color: red;">Error: ${error.message}</div>`;
+            }
+        }
+        
+        function calculateTopicCentroids() {
+            const topicGroups = {};
+            
+            allData.forEach(d => {
+                if (!topicGroups[d.topic]) {
+                    topicGroups[d.topic] = {
+                        x: [], y: [], label: d.topic_label, count: 0
+                    };
+                }
+                topicGroups[d.topic].x.push(d.x);
+                topicGroups[d.topic].y.push(d.y);
+                topicGroups[d.topic].count++;
+            });
+            
+            // Calculate centroids
+            Object.keys(topicGroups).forEach(topic => {
+                const group = topicGroups[topic];
+                topicCentroids[topic] = {
+                    x: group.x.reduce((a,b) => a+b, 0) / group.x.length,
+                    y: group.y.reduce((a,b) => a+b, 0) / group.y.length,
+                    label: group.label,
+                    count: group.count
+                };
+            });
+            
+            console.log(`✓ Calculated ${Object.keys(topicCentroids).length} topic centroids`);
+        }
+        
+        function initializeControls() {
+            const icSet = [...new Set(allData.map(d => d.ic))].sort();
+            const icContainer = document.getElementById('icCheckboxes');
+            
+            icSet.forEach(ic => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+                    <input type="checkbox" id="ic_${ic}" value="${ic}" checked>
+                    <label for="ic_${ic}">${ic}</label>
+                `;
+                icContainer.appendChild(div);
+                
+                div.querySelector('input').addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        selectedICs.add(ic);
+                    } else {
+                        selectedICs.delete(ic);
+                    }
+                    filterAndPlot();
+                });
+            });
+            
+            // Event listeners
+            document.getElementById('colorBy').addEventListener('change', filterAndPlot);
+            document.getElementById('yearMin').addEventListener('input', updateYearRange);
+            document.getElementById('yearMax').addEventListener('input', updateYearRange);
+            document.getElementById('toggleLabels').addEventListener('click', toggleLabels);
+            document.getElementById('toggleOverlay').addEventListener('click', toggleOverlay);
+            document.getElementById('toggleAll').addEventListener('click', toggleAllICs);
+            document.getElementById('searchBox').addEventListener('input', filterAndPlot);
+            document.getElementById('labelDensity').addEventListener('input', updateLabelDensity);
+        }
+        
+        function updateYearRange() {
+            const min = parseInt(document.getElementById('yearMin').value);
+            const max = parseInt(document.getElementById('yearMax').value);
+            document.getElementById('yearMinVal').textContent = min;
+            document.getElementById('yearMaxVal').textContent = max;
+            filterAndPlot();
+        }
+        
+        function toggleLabels() {
+            showLabels = !showLabels;
+            const btn = document.getElementById('toggleLabels');
+            btn.textContent = showLabels ? 'Labels: ON' : 'Labels: OFF';
+            btn.classList.toggle('active');
+            document.getElementById('labelDensityControl').style.display = showLabels ? 'flex' : 'none';
+            filterAndPlot();
+        }
+        
+        function toggleOverlay() {
+            overlayMode = !overlayMode;
+            const btn = document.getElementById('toggleOverlay');
+            btn.textContent = overlayMode ? 'Overlay Mode: ON' : 'Overlay Mode: OFF';
+            btn.classList.toggle('active');
+            filterAndPlot();
+        }
+        
+        function updateLabelDensity() {
+            const count = document.getElementById('labelDensity').value;
+            document.getElementById('labelCount').textContent = `${count} labels`;
+            filterAndPlot();
+        }
+        
+        function toggleAllICs() {
+            const checkboxes = document.querySelectorAll('#icCheckboxes input');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            
+            checkboxes.forEach(cb => {
+                cb.checked = !allChecked;
+                if (cb.checked) {
+                    selectedICs.add(cb.value);
+                } else {
+                    selectedICs.delete(cb.value);
+                }
+            });
+            
+            filterAndPlot();
+        }
+        
+        function filterAndPlot() {
+            const yearMin = parseInt(document.getElementById('yearMin').value);
+            const yearMax = parseInt(document.getElementById('yearMax').value);
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            
+            filteredData = allData.filter(d => 
+                d.year >= yearMin && 
+                d.year <= yearMax && 
+                selectedICs.has(d.ic) &&
+                (searchTerm === '' || d.title.toLowerCase().includes(searchTerm) || d.id.toLowerCase().includes(searchTerm))
+            );
+            
+            updateStats();
+            plotData();
+        }
+        
+        function updateStats() {
+            document.getElementById('visibleCount').textContent = allData.length.toLocaleString();
+            document.getElementById('selectedCount').textContent = filteredData.length.toLocaleString();
+            const totalFunding = filteredData.reduce((sum, d) => sum + d.funding, 0);
+            document.getElementById('totalFunding').textContent = 
+                '$' + (totalFunding / 1e9).toFixed(2) + 'B';
+        }
+        
+        function getTopLabeledTopics() {
+            const labelCount = parseInt(document.getElementById('labelDensity').value);
+            
+            // Get topics represented in filtered data
+            const topicCounts = {};
+            filteredData.forEach(d => {
+                topicCounts[d.topic] = (topicCounts[d.topic] || 0) + 1;
+            });
+            
+            // Sort by count and take top N
+            return Object.entries(topicCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, labelCount)
+                .map(([topic, count]) => parseInt(topic));
+        }
+        
+        function plotData() {
+            const colorBy = document.getElementById('colorBy').value;
+            let traces = [];
+            
+            // Add background layer if overlay mode
+            if (overlayMode && filteredData.length < allData.length) {
+                traces.push({
+                    x: allData.map(d => d.x),
+                    y: allData.map(d => d.y),
+                    mode: 'markers',
+                    type: 'scattergl',
+                    name: 'Background',
+                    hoverinfo: 'skip',
+                    marker: {
+                        size: 2,
+                        color: '#d3d3d3',
+                        opacity: 0.15
+                    },
+                    showlegend: false
+                });
+            }
+            
+            // Main data traces
+            const dataToPlot = overlayMode ? filteredData : filteredData;
+            
+            if (colorBy === 'ic') {
+                const icGroups = {};
+                dataToPlot.forEach(d => {
+                    if (!icGroups[d.ic]) icGroups[d.ic] = [];
+                    icGroups[d.ic].push(d);
+                });
+                
+                Object.keys(icGroups).sort().forEach(ic => {
+                    const data = icGroups[ic];
+                    traces.push({
+                        x: data.map(d => d.x),
+                        y: data.map(d => d.y),
+                        mode: 'markers',
+                        type: 'scattergl',
+                        name: ic,
+                        hovertext: data.map(d => `<b>${d.title}</b><br>Topic: ${d.topic_label}<br>IC: ${d.ic}<br>Year: ${d.year}<br>$${(d.funding/1e6).toFixed(2)}M<br>${d.id}`),
+                        hoverinfo: 'text',
+                        marker: {
+                            size: overlayMode ? 4 : 3,
+                            color: icColors[ic] || '#999',
+                            opacity: overlayMode ? 0.9 : 0.7
+                        }
+                    });
+                });
+            } else if (colorBy === 'year') {
+                traces.push({
+                    x: dataToPlot.map(d => d.x),
+                    y: dataToPlot.map(d => d.y),
+                    mode: 'markers',
+                    type: 'scattergl',
+                    hovertext: dataToPlot.map(d => `<b>${d.title}</b><br>Topic: ${d.topic_label}<br>IC: ${d.ic}<br>Year: ${d.year}<br>$${(d.funding/1e6).toFixed(2)}M`),
+                    hoverinfo: 'text',
+                    marker: {
+                        size: overlayMode ? 4 : 3,
+                        color: dataToPlot.map(d => d.year),
+                        colorscale: 'Viridis',
+                        colorbar: {
+                            title: 'Year',
+                            thickness: 15,
+                            len: 0.7
+                        },
+                        opacity: overlayMode ? 0.9 : 0.7
+                    },
+                    showlegend: false
+                });
+            } else {
+                traces.push({
+                    x: dataToPlot.map(d => d.x),
+                    y: dataToPlot.map(d => d.y),
+                    mode: 'markers',
+                    type: 'scattergl',
+                    hovertext: dataToPlot.map(d => `<b>${d.title}</b><br>Topic ${d.topic}: ${d.topic_label}<br>IC: ${d.ic}<br>Year: ${d.year}`),
+                    hoverinfo: 'text',
+                    marker: {
+                        size: overlayMode ? 4 : 3,
+                        color: dataToPlot.map(d => d.topic),
+                        colorscale: 'Plasma',
+                        colorbar: {
+                            title: 'Topic',
+                            thickness: 15,
+                            len: 0.7
+                        },
+                        opacity: overlayMode ? 0.9 : 0.7
+                    },
+                    showlegend: false
+                });
+            }
+            
+            // Add topic labels if enabled
+            if (showLabels) {
+                const topicsToLabel = getTopLabeledTopics();
+                const labelData = topicsToLabel.map(t => topicCentroids[t]).filter(Boolean);
+                
+                traces.push({
+                    x: labelData.map(d => d.x),
+                    y: labelData.map(d => d.y),
+                    mode: 'text',
+                    type: 'scatter',
+                    text: labelData.map(d => d.label.split(' • ')[0]),
+                    textposition: 'middle center',
+                    textfont: {
+                        size: 11,
+                        color: '#333',
+                        family: 'Arial, sans-serif'
+                    },
+                    hoverinfo: 'skip',
+                    showlegend: false
+                });
+            }
+            
+            const layout = {
+                title: {
+                    text: overlayMode ? 
+                        'NIH Grant Topic Map (Overlay Mode - Filtered Highlighted)' : 
+                        'NIH Grant Topic Map',
+                    font: { size: 16 }
+                },
+                xaxis: { title: 'UMAP 1', showgrid: false, zeroline: false },
+                yaxis: { title: 'UMAP 2', showgrid: false, zeroline: false },
+                hovermode: 'closest',
+                plot_bgcolor: '#fafbfc',
+                paper_bgcolor: 'white',
+                showlegend: colorBy === 'ic',
+                legend: {
+                    orientation: 'v',
+                    yanchor: 'top',
+                    y: 0.99,
+                    xanchor: 'right',
+                    x: 0.99,
+                    bgcolor: 'rgba(255,255,255,0.95)',
+                    bordercolor: '#ddd',
+                    borderwidth: 1,
+                    font: { size: 10 }
+                }
+            };
+            
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                scrollZoom: true,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d']
+            };
+            
+            Plotly.newPlot('visualization', traces, layout, config);
+        }
+        
+        loadData();
+    </script>
+</body>
+</html>

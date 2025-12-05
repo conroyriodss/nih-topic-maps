@@ -1,0 +1,45 @@
+{
+  "creationTime": "1764021819545",
+  "etag": "cu9UldmD4JkWt6ngbinh4g==",
+  "id": "od-cl-odss-conroyri-f75a:nih_exporter.linktables",
+  "kind": "bigquery#table",
+  "lastModifiedTime": "1764079432707",
+  "location": "US",
+  "numActiveLogicalBytes": "193942413",
+  "numActivePhysicalBytes": "79747119",
+  "numBytes": "193942413",
+  "numCurrentPhysicalBytes": "46780227",
+  "numLongTermBytes": "0",
+  "numLongTermLogicalBytes": "0",
+  "numLongTermPhysicalBytes": "0",
+  "numRows": "6687674",
+  "numTimeTravelPhysicalBytes": "32966892",
+  "numTotalLogicalBytes": "193942413",
+  "numTotalPhysicalBytes": "79747119",
+  "schema": {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "PMID",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "PROJECT_NUMBER",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "YEAR",
+        "type": "INTEGER"
+      }
+    ]
+  },
+  "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/od-cl-odss-conroyri-f75a/datasets/nih_exporter/tables/linktables",
+  "tableReference": {
+    "datasetId": "nih_exporter",
+    "projectId": "od-cl-odss-conroyri-f75a",
+    "tableId": "linktables"
+  },
+  "type": "TABLE"
+}

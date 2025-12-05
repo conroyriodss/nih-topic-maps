@@ -1,0 +1,36 @@
+NIH Topic Mapping - File Manifest
+December 3, 2025
+
+DATA FILES (CSV):
+  awards_hierarchical_clustered.csv                9.4M    Final hierarchical clustering (250K awards)
+  awards_from_transactions_clustered.csv           9.4M    Award-level with UMAP coordinates
+  hierarchical_250k_clustered_k75.csv             44M     Transaction-level clustering (250K)
+  cluster_75_labels.csv                           11K     Transaction cluster labels
+  award_cluster_labels_semantic.csv              7.3K     Award cluster metadata
+
+EMBEDDINGS:
+  award_embeddings_tfidf_103k.npy                 41M     TF-IDF embeddings for 103K awards
+
+VISUALIZATIONS (HTML):
+  award_map_hierarchical.html                     1.2M    Interactive 3-level hierarchy
+  award_map_from_transactions.html               950K     Interactive single-level
+  nih_250k_interactive_viz.html                  2.1M     Transaction-level interactive
+
+VISUALIZATIONS (PNG):
+  award_semantic_map_103k.png                    660K     Award clustering map
+  award_cluster_sizes_semantic.png                92K     Cluster size distribution
+  award_funding_distribution_semantic.png        242K     Funding by cluster
+  nih_250k_labeled_map.png                       1.3M     Transaction map
+
+DOCUMENTATION:
+  README_DEC3_SESSION.md                          3.2K    Session summary
+  SESSION_FINAL_DEC3.md                           4.8K    Detailed session notes
+  FINAL_SESSION_REPORT_DEC3.md                    6.5K    Technical report
+  FILE_MANIFEST.txt                              (this file)
+
+SCRIPTS:
+  create_hierarchical_award_clustering.py         12K     Hierarchical clustering script
+  cleanup_and_sync.sh                            (this file)
+
+TOTAL SIZE: ~110MB
+TOTAL FILES: 20+

@@ -1,0 +1,17 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "APPLICATION_ID",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ABSTRACT_TEXT",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "YEAR",
+    "type": "INTEGER"
+  }
+]

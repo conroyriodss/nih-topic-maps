@@ -1,0 +1,17 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "PMID",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "PROJECT_NUMBER",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "YEAR",
+    "type": "INTEGER"
+  }
+]

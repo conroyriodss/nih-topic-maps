@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-11-28T15:46:31.902945",
+  "project_terms_metrics": {
+    "silhouette_score": 0.039097069234441846,
+    "davies_bouldin_index": 2.9548050677739606,
+    "calinski_harabasz_score": 466.05543935031443
+  },
+  "cluster_analysis": {
+    "min_size": 35,
+    "max_size": 1249,
+    "mean_size": 433.2,
+    "median_size": 369.5,
+    "small_clusters": 3,
+    "mean_ics": 20.82,
+    "max_ics": 28,
+    "generic_clusters": 7
+  }
+}

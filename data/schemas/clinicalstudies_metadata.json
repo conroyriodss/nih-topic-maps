@@ -1,0 +1,50 @@
+{
+  "creationTime": "1764080434784",
+  "etag": "oXTFDSgpZCtzX1QvxzK9AA==",
+  "id": "od-cl-odss-conroyri-f75a:nih_exporter.clinicalstudies",
+  "kind": "bigquery#table",
+  "lastModifiedTime": "1764080434784",
+  "location": "US",
+  "numActiveLogicalBytes": "4511028",
+  "numActivePhysicalBytes": "1195606",
+  "numBytes": "4511028",
+  "numCurrentPhysicalBytes": "1195606",
+  "numLongTermBytes": "0",
+  "numLongTermLogicalBytes": "0",
+  "numLongTermPhysicalBytes": "0",
+  "numRows": "37387",
+  "numTimeTravelPhysicalBytes": "0",
+  "numTotalLogicalBytes": "4511028",
+  "numTotalPhysicalBytes": "1195606",
+  "schema": {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "Core_Project_Number",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ClinicalTrials_gov_ID",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "Study",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "Study_Status",
+        "type": "STRING"
+      }
+    ]
+  },
+  "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/od-cl-odss-conroyri-f75a/datasets/nih_exporter/tables/clinicalstudies",
+  "tableReference": {
+    "datasetId": "nih_exporter",
+    "projectId": "od-cl-odss-conroyri-f75a",
+    "tableId": "clinicalstudies"
+  },
+  "type": "TABLE"
+}

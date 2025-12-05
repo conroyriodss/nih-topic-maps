@@ -1,0 +1,13 @@
+{
+  "method": "hybrid_hierarchical_lemmatized",
+  "K": 50,
+  "silhouette": 0.0015269613215860673,
+  "calinski_harabasz": 88.02084054824599,
+  "davies_bouldin": 4.061686701297544,
+  "weights": {
+    "embedding": 0.5,
+    "rcdc": 0.15,
+    "ic": 0.1,
+    "terms_tfidf": 0.25
+  }
+}

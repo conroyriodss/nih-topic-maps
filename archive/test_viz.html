@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>NIH Topic Map Test</h1>
+    <p>Loading data...</p>
+    <div id="chart" style="height:600px;"></div>
+    
+    <script>
+        console.log("Script started");
+        
+        async function test() {
+            try {
+                console.log("Fetching data...");
+                const res = await fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/hybrid_viz_data.json');
+                const data = await res.json();
+                console.log(`Loaded ${data.length} records`);
+                
+                // Get first 1000 records
+                const subset = data.slice(0, 1000);
+                
+                // Group by topic
+                const byTopic = {};
+                subset.forEach(d => {
+                    if (!byTopic[d.topic]) {
+                        byTopic[d.topic] = { x: [], y: [], text: [] };
+                    }
+                    byTopic[d.topic].x.push(d.x);
+                    byTopic[d.topic].y.push(d.y);
+                    byTopic[d.topic].text.push(d.title);
+                });
+                
+                console.log(`Found ${Object.keys(byTopic).length} topics`);
+                
+                // Create traces
+                const traces = Object.entries(byTopic).map(([topic, group]) => ({
+                    x: group.x,
+                    y: group.y,
+                    text: group.text,
+                    mode: 'markers',
+                    type: 'scatter',
+                    name: `Topic ${topic}`,
+                    marker: { size: 6, opacity: 0.7 }
+                }));
+                
+                const layout = {
+                    title: 'NIH Topic Map (first 1000 grants)',
+                    xaxis: { showgrid: false },
+                    yaxis: { showgrid: false },
+                    hovermode: 'closest'
+                };
+                
+                console.log(`Creating plot with ${traces.length} traces`);
+                Plotly.newPlot('chart', traces, layout);
+                document.body.innerHTML += '<p style="color:green;">✓ Visualization loaded successfully!</p>';
+            } catch(e) {
+                console.error('Error:', e);
+                document.body.innerHTML += `<p style="color:red;">Error: ${e.message}</p>`;
+            }
+        }
+        
+        test();
+    </script>
+</body>
+</html>

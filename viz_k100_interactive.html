@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIH Topic Map - 100 PROJECT_TERMS Clusters</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.9; }
+        .container { display: flex; height: calc(100vh - 70px); }
+        .controls { width: 320px; background: white; border-right: 1px solid #e0e0e0; overflow-y: auto; padding: 20px; }
+        .control-group { margin-bottom: 20px; }
+        .control-group label { display: block; font-weight: 600; font-size: 12px; color: #333; text-transform: uppercase; margin-bottom: 8px; }
+        select, input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; margin-bottom: 6px; }
+        select:focus, input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .stats { background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 12px; }
+        .stat-item { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .stat-label { color: #666; }
+        .stat-value { font-weight: 600; color: #667eea; }
+        .viz-container { flex: 1; position: relative; background: white; }
+        svg { width: 100%; height: 100%; }
+        .point { cursor: pointer; stroke: white; stroke-width: 0.5px; transition: all 0.1s; }
+        .point:hover { stroke-width: 2px; filter: brightness(1.2); }
+        .point.faded { opacity: 0.08 !important; }
+        .tooltip { position: absolute; background: rgba(0, 0, 0, 0.95); color: white; padding: 12px 15px; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 50; max-width: 350px; box-shadow: 0 4px 12px rgba(0,0,0,0.25); display: none; }
+        .tooltip-title { font-weight: 600; margin-bottom: 8px; color: #a8b3ff; }
+        .tooltip-item { margin: 4px 0; }
+        .tooltip-label { color: #aaa; display: inline-block; width: 70px; }
+        .legend { position: absolute; bottom: 20px; right: 20px; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-size: 11px; max-width: 200px; max-height: 350px; overflow-y: auto; }
+        .legend-title { font-weight: 600; margin-bottom: 10px; font-size: 12px; }
+        .legend-item { display: flex; align-items: center; margin-bottom: 6px; }
+        .legend-color { width: 12px; height: 12px; border-radius: 2px; margin-right: 8px; }
+        button { width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; }
+        button:hover { background: #5568d3; }
+        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧬 NIH Topic Map - 100 PROJECT_TERMS Clusters</h1>
+        <p>43,320 grants | FY 2000-2024 | Optimized UMAP | Silhouette: 0.039</p>
+    </div>
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label>Color By</label>
+                <select id="colorBy">
+                    <option value="cluster">Topic Cluster</option>
+                    <option value="ic">NIH IC</option>
+                    <option value="year">Fiscal Year</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Filter Topics</label>
+                <select id="topicFilter" multiple size="8"><option value="all" selected>All Topics</option></select>
+                <small style="color: #999;">Hold Ctrl/Cmd for multiple</small>
+            </div>
+            <div class="control-group">
+                <label>Filter ICs</label>
+                <select id="icFilter" multiple size="6"><option value="all" selected>All ICs</option></select>
+                <small style="color: #999;">Hold Ctrl/Cmd for multiple</small>
+            </div>
+            <div class="control-group">
+                <label>Year Range</label>
+                <input type="number" id="yearMin" min="2000" max="2024" value="2000" placeholder="Min">
+                <input type="number" id="yearMax" min="2000" max="2024" value="2024" placeholder="Max">
+            </div>
+            <div class="control-group"><button onclick="resetFilters()">Reset All Filters</button></div>
+            <div class="stats">
+                <div class="stat-item"><span class="stat-label">Visible:</span><span class="stat-value" id="visibleCount">43,320</span></div>
+                <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value">43,320</span></div>
+                <div class="stat-item"><span class="stat-label">Topics:</span><span class="stat-value">100</span></div>
+                <div class="stat-item"><span class="stat-label">ICs:</span><span class="stat-value" id="icCount">--</span></div>
+            </div>
+        </div>
+        <div class="viz-container">
+            <div class="loading">Loading visualization data...</div>
+            <svg id="viz"></svg>
+            <div id="legend" class="legend"></div>
+            <div class="tooltip" id="tooltip"></div>
+        </div>
+    </div>
+    <script>
+        let vizData=null,svg,xScale,yScale,colorScale;
+        let currentFilters={topics:[],ics:[],yearMin:2000,yearMax:2024,colorBy:'cluster'};
+        
+        fetch('https://storage.googleapis.com/od-cl-odss-conroyri-nih-embeddings/sample/viz_data_project_terms_k100_final.json')
+            .then(r=>r.json()).then(data=>{
+                document.querySelector('.loading').style.display='none';vizData=data;
+                console.log('Loaded',data.points.length,'points and',data.clusters.length,'clusters');
+                initializeVisualization();populateFilters();updateVisualization();
+            }).catch(err=>{console.error('Error:',err);document.querySelector('.loading').textContent='Error loading data';});
+        
+        function initializeVisualization(){
+            const width=document.querySelector('.viz-container').clientWidth;
+            const height=document.querySelector('.viz-container').clientHeight;
+            const xExtent=d3.extent(vizData.points,d=>d.x);const yExtent=d3.extent(vizData.points,d=>d.y);
+            const padding=20;
+            xScale=d3.scaleLinear().domain(xExtent).range([padding,width-padding]);
+            yScale=d3.scaleLinear().domain(yExtent).range([height-padding,padding]);
+            svg=d3.select('#viz').attr('width',width).attr('height',height);
+        }
+        
+        function updateVisualization(){
+            const filtered=vizData.points.filter(d=>{
+                let keep=true;
+                if(currentFilters.topics.length>0&&!currentFilters.topics.includes('all'))
+                    keep=keep&&currentFilters.topics.includes(d.cluster);
+                if(currentFilters.ics.length>0&&!currentFilters.ics.includes('all'))
+                    keep=keep&&currentFilters.ics.includes(d.ic);
+                keep=keep&&d.year>=currentFilters.yearMin&&d.year<=currentFilters.yearMax;
+                return keep;
+            });
+            document.getElementById('visibleCount').textContent=filtered.length.toLocaleString();
+            
+            if(currentFilters.colorBy==='cluster')colorScale=d3.scaleSequential(d3.interpolateRainbow).domain([0,100]);
+            else if(currentFilters.colorBy==='ic')colorScale=d3.scaleOrdinal(d3.schemeTableau10).domain([...new Set(vizData.points.map(d=>d.ic))].sort());
+            else if(currentFilters.colorBy==='year')colorScale=d3.scaleSequential(d3.interpolateViridis).domain([2000,2024]);
+            
+            updateLegend(colorScale);svg.selectAll('.point').remove();
+            svg.selectAll('.point').data(vizData.points).enter().append('circle')
+                .attr('class',d=>'point'+(filtered.some(f=>f.application_id===d.application_id)?'':' faded'))
+                .attr('cx',d=>xScale(d.x)).attr('cy',d=>yScale(d.y)).attr('r',2.5)
+                .attr('fill',d=>currentFilters.colorBy==='cluster'?colorScale(d.cluster):currentFilters.colorBy==='ic'?colorScale(d.ic):colorScale(d.year))
+                .attr('opacity',d=>filtered.some(f=>f.application_id===d.application_id)?0.7:0.08)
+                .on('mouseover',(event,d)=>showTooltip(event,d)).on('mouseout',hideTooltip);
+        }
+        
+        function populateFilters(){
+            const topicSelect=document.getElementById('topicFilter');
+            vizData.clusters.forEach(cluster=>{
+                const option=document.createElement('option');
+                option.value=cluster.id;option.textContent=`${cluster.id}: ${cluster.label.substring(0,40)} (${cluster.size})`;
+                topicSelect.appendChild(option);
+            });
+            const icSelect=document.getElementById('icFilter');
+            const ics=[...new Set(vizData.points.map(d=>d.ic))].sort();
+            document.getElementById('icCount').textContent=ics.length;
+            ics.forEach(ic=>{const option=document.createElement('option');option.value=ic;option.textContent=ic;icSelect.appendChild(option);});
+            
+            document.getElementById('colorBy').addEventListener('change',e=>{currentFilters.colorBy=e.target.value;updateVisualization();});
+            document.getElementById('topicFilter').addEventListener('change',e=>{currentFilters.topics=Array.from(e.target.selectedOptions).map(o=>o.value==='all'?'all':parseInt(o.value));updateVisualization();});
+            document.getElementById('icFilter').addEventListener('change',e=>{currentFilters.ics=Array.from(e.target.selectedOptions).map(o=>o.value);updateVisualization();});
+            document.getElementById('yearMin').addEventListener('change',e=>{currentFilters.yearMin=parseInt(e.target.value);updateVisualization();});
+            document.getElementById('yearMax').addEventListener('change',e=>{currentFilters.yearMax=parseInt(e.target.value);updateVisualization();});
+        }
+        
+        function resetFilters(){
+            currentFilters={topics:['all'],ics:['all'],yearMin:2000,yearMax:2024,colorBy:'cluster'};
+            document.getElementById('topicFilter').selectedIndex=0;document.getElementById('icFilter').selectedIndex=0;
+            document.getElementById('colorBy').value='cluster';
+            document.getElementById('yearMin').value=2000;document.getElementById('yearMax').value=2024;
+            updateVisualization();
+        }
+        
+        function showTooltip(event,d){
+            const cluster=vizData.clusters.find(c=>c.id===d.cluster);
+            const tooltip=document.getElementById('tooltip');
+            tooltip.innerHTML=`<div class="tooltip-title">${d.title||'Grant '+d.application_id}</div>
+                <div class="tooltip-item"><span class="tooltip-label">App ID:</span> ${d.application_id}</div>
+                <div class="tooltip-item"><span class="tooltip-label">Topic:</span> ${d.cluster} - ${cluster?cluster.label.substring(0,40):'Unknown'}</div>
+                <div class="tooltip-item"><span class="tooltip-label">IC:</span> ${d.ic}</div>
+                <div class="tooltip-item"><span class="tooltip-label">Year:</span> ${d.year}</div>
+                <div class="tooltip-item"><span class="tooltip-label">Cost:</span> $${(d.cost/1000000).toFixed(2)}M</div>`;
+            tooltip.style.display='block';tooltip.style.left=(event.pageX+10)+'px';tooltip.style.top=(event.pageY+10)+'px';
+        }
+        
+        function hideTooltip(){document.getElementById('tooltip').style.display='none';}
+        
+        function updateLegend(colorScale){
+            const legend=document.getElementById('legend');
+            legend.innerHTML='<div class="legend-title">Color: '+currentFilters.colorBy.toUpperCase()+'</div>';
+            if(currentFilters.colorBy==='cluster'){
+                vizData.clusters.slice(0,15).forEach(cluster=>{
+                    const item=document.createElement('div');item.className='legend-item';
+                    const color=document.createElement('div');color.className='legend-color';
+                    color.style.backgroundColor=colorScale(cluster.id);item.appendChild(color);
+                    const label=document.createElement('span');label.textContent=`${cluster.id}: ${cluster.label.substring(0,25)}`;
+                    item.appendChild(label);legend.appendChild(item);
+                });
+            }else if(currentFilters.colorBy==='ic'){
+                const ics=[...new Set(vizData.points.map(d=>d.ic))].sort().slice(0,20);
+                ics.forEach(ic=>{
+                    const item=document.createElement('div');item.className='legend-item';
+                    const color=document.createElement('div');color.className='legend-color';
+                    color.style.backgroundColor=colorScale(ic);item.appendChild(color);
+                    const label=document.createElement('span');label.textContent=ic;
+                    item.appendChild(label);legend.appendChild(item);
+                });
+            }else{
+                const years=[2000,2006,2012,2018,2024];
+                years.forEach(year=>{
+                    const item=document.createElement('div');item.className='legend-item';
+                    const color=document.createElement('div');color.className='legend-color';
+                    color.style.backgroundColor=colorScale(year);item.appendChild(color);
+                    const label=document.createElement('span');label.textContent=year;
+                    item.appendChild(label);legend.appendChild(item);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

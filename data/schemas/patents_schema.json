@@ -1,0 +1,22 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "PATENT_ID",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "PATENT_TITLE",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "PROJECT_ID",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "PATENT_ORG_NAME",
+    "type": "STRING"
+  }
+]
